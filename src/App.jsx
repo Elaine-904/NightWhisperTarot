@@ -1,0 +1,1181 @@
+// src/App.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Background from "./components/Background";
+import PixelStars from "./components/PixelStars";
+import TarotCard from "./components/TarotCard";
+import DreamBottle from "./components/DreamBottle";
+import TarotEncyclopedia from "./components/TarotEncyclopedia";
+import MoonCycleEngine from "./components/MoonCycleEngine";
+import MysticChat from "./components/MysticChat";
+import LangSwitcher from "./components/LangSwitcher";
+import { getBrowserLang, LANGS, useI18n } from "./i18n";
+import { CARDS } from "./data/cards";
+import { askAI } from "./api/aiClient";
+import { getMoonCycle } from "./moon";
+import html2canvas from "html2canvas";
+
+const SPREAD_POSITIONS = ["past", "present", "future"];
+const LANG_STORAGE_KEY = "nightwhisper-lang";
+
+const AMBIENT_TRACKS = [
+  {
+    id: "night-wind",
+    label: "夜风风铃",
+    note: "默认夜风",
+    url: "/night-wind-chimes.wav",
+    volume: 0.45,
+  },
+  {
+    id: "cafe-hum",
+    label: "咖啡厅",
+    note: "柔和钢琴",
+    url: "https://cdn.pixabay.com/download/audio/2023/05/01/audio_2e501a2fbf.mp3?filename=lofi-study-112191.mp3",
+    volume: 0.35,
+  },
+  {
+    id: "forest-soft",
+    label: "森林",
+    note: "溪水虫鸣",
+    url: "https://cdn.pixabay.com/download/audio/2022/10/16/audio_9c8a9b9c96.mp3?filename=forest-lullaby-ambient-121089.mp3",
+    volume: 0.5,
+  },
+];
+
+const SECRET_SEED_KEY = "nightwhisper.secretSeed";
+const PROPHECY_LINES = [
+  "月色把答案藏在拐角，留一盏灯给路过的自己。",
+  "今晚的风把旧梦翻面，夹带一颗微光的果核。",
+  "抬头看天花板的裂缝，可能正对着一片星海。",
+  "把未寄出的信折成船，放在水杯里等一阵月潮。",
+  "一粒灰尘也知道回家的路，只要灯还开着。",
+];
+
+const SECRET_POOL = [
+  { id: "moon-fragment", label: "月之碎片", desc: "卡牌泛着碎月描边，夜风里有轻微回响。" },
+  { id: "mystery-bottle", label: "神秘瓶子", desc: "Dream Bottle 里埋了一句隐藏星语。" },
+  { id: "lost-star-stone", label: "失落的星石", desc: "像素星群翻倍闪烁，遇星石会短暂发亮。" },
+  { id: "prophecy-line", label: "预言短句", desc: "主页出现一行只属于今晚的预言。" },
+  { id: "arcana-half", label: "隐藏卡 · 0.5", desc: "加入一张 Major Arcana 0.5：The Between。" },
+  { id: "easter-aurora", label: "彩蛋背景", desc: "背景切换极光晕彩，整晚发光。" },
+];
+
+const ARCANA_HALF_SVG = `
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 620'>
+  <defs>
+    <linearGradient id='g' x1='0' x2='0' y1='0' y2='1'>
+      <stop offset='0%' stop-color='#0f1230'/>
+      <stop offset='55%' stop-color='#26124d'/>
+      <stop offset='100%' stop-color='#0a0c1e'/>
+    </linearGradient>
+  </defs>
+  <rect width='400' height='620' fill='url(#g)'/>
+  <circle cx='200' cy='120' r='70' fill='rgba(255,255,255,0.12)'/>
+  <path d='M120 180 Q200 120 280 180 T200 320 T120 180' fill='rgba(195,170,255,0.24)'/>
+  <text x='200' y='340' text-anchor='middle' fill='#e8e1ff' font-size='62' font-family='serif'>0.5</text>
+  <text x='200' y='380' text-anchor='middle' fill='#cde9ff' font-size='16' font-family='serif'>The Between</text>
+  <path d='M90 440 Q200 520 310 440' stroke='#b5f4ff' stroke-width='2' fill='none'/>
+  <path d='M110 480 Q200 560 290 480' stroke='#ffd2ff' stroke-width='1.6' fill='none'/>
+  <circle cx='140' cy='460' r='6' fill='#93e8ff'/>
+  <circle cx='260' cy='460' r='6' fill='#f7d9ff'/>
+</svg>
+`;
+
+const ARCANA_HALF_CARD = {
+  id: "arcana-0-5",
+  index: 0.5,
+  name: "The Between",
+  cnName: "0.5 迷途",
+  image: `data:image/svg+xml,${encodeURIComponent(ARCANA_HALF_SVG)}`,
+  keywords: ["threshold", "moonlit choice", "liminal promise"],
+};
+
+// Local fallback in case AI fails (keep English, soft tone)
+function makeLocalLines(card, label = "", moonHint = "") {
+  const name = card?.name || "a night card";
+  const ks = card?.keywords?.filter(Boolean) || [];
+  const k0 = ks[0] || "quiet change";
+  const k1 = ks[1] || "inner voice";
+  const k2 = ks[2] || k0;
+  const seed = (label || name).length;
+  const pick = (arr, salt = 0) => arr[(seed + salt) % arr.length];
+  const lunar = moonHint ? ` · ${moonHint}` : "";
+
+  const symb = pick(
+    [
+      `${name} sketches ${k0} in the dark${lunar}`,
+      `${name} hums softly about ${k0}${lunar}`,
+      `${name} casts a lilac light on ${k0}${lunar}`,
+    ],
+    1
+  );
+
+  const remind = pick(
+    [
+      `Slow down, let ${k1} rise on its own${lunar}`,
+      `Notice a small glow around ${k1}${lunar}`,
+      `Breathe softer, listen for ${k1}${lunar}`,
+    ],
+    2
+  );
+
+  const action = pick(
+    [
+      `Tonight, one tiny act toward ${k2}${lunar}`,
+      `Save a quiet minute to honor ${k2}${lunar}`,
+      `Write a short wish about ${k2}${lunar}`,
+    ],
+    3
+  );
+
+  const prefix = label ? `${label} ` : "";
+  return [`${prefix}Symbolism: ${symb}`, `${prefix}Reminder: ${remind}`, `${prefix}Action: ${action}`];
+}
+
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function resolveTheme(hour, weathercode, isDay) {
+  if ([51, 61, 63].includes(weathercode)) return "rain";
+  if ([71, 73].includes(weathercode)) return "snow";
+  if (weathercode === 3) return "cloud";
+  if (hour >= 5 && hour < 17) return "day";
+  if (hour >= 17 && hour < 19) return "sunset";
+  return "night";
+}
+
+function pickOne(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function rollSecretSeed() {
+  const todayKey = new Date().toISOString().slice(0, 10);
+  if (typeof window === "undefined") {
+    return { date: todayKey, hit: false };
+  }
+
+  try {
+    const cached = JSON.parse(localStorage.getItem(SECRET_SEED_KEY));
+    if (cached?.date === todayKey) return cached;
+  } catch (err) {
+    // ignore parse errors
+  }
+
+  const roll = Math.random();
+  let entry = { date: todayKey, hit: false };
+
+  if (roll < 0.01) {
+    const pick = pickOne(SECRET_POOL);
+    entry = {
+      date: todayKey,
+      hit: true,
+      id: pick?.id,
+    };
+
+    if (pick?.id === "prophecy-line") {
+      entry.payload = { line: pickOne(PROPHECY_LINES) };
+    }
+  }
+
+  try {
+    localStorage.setItem(SECRET_SEED_KEY, JSON.stringify(entry));
+  } catch (err) {
+    // storage may fail in private mode; ignore
+  }
+
+  return entry;
+}
+
+const WEATHER_MOODS = {
+  rain: { label: "Rain", mood: "introspection", boost: 2 },
+  day: { label: "Sun", mood: "optimism", boost: 3 },
+  night: { label: "Night", mood: "intuition", boost: 2 },
+  sunset: { label: "Sunset", mood: "release", boost: 2 },
+  cloud: { label: "Cloud", mood: "grounding", boost: 2 },
+  snow: { label: "Snow", mood: "stillness", boost: 2 },
+};
+
+const CARD_MOOD_OVERRIDES = {
+  hermit: "introspection",
+  priestess: "intuition",
+  moon: "intuition",
+  star: "hope",
+  sun: "optimism",
+  lovers: "optimism",
+  death: "rebirth",
+  tower: "truth",
+  wheeloffortune: "fate",
+  temperance: "balance",
+  devil: "shadow",
+  judgement: "awakening",
+};
+
+function inferCardMood(card) {
+  if (!card) return "intuition";
+  const override = CARD_MOOD_OVERRIDES[card.id];
+  if (override) return override;
+
+  const text = (card.keywords || []).join(" ").toLowerCase();
+  if (/(joy|warmth|clarity|growth|hope|connection|alignment)/.test(text)) {
+    return "optimism";
+  }
+  if (/(intuition|dream|silence|reflection|solitude|inner)/.test(text)) {
+    return "introspection";
+  }
+  if (/(change|transition|cycles|rebirth|chance)/.test(text)) {
+    return "change";
+  }
+  if (/(responsibility|structure|truth|decision|fairness)/.test(text)) {
+    return "clarity";
+  }
+  if (/(care|comfort|healing|patience|balance|mixing)/.test(text)) {
+    return "soothing";
+  }
+  if (/(drive|determination|power|willpower)/.test(text)) {
+    return "momentum";
+  }
+  return "mystery";
+}
+
+const AFFIRMATION_KEY = "nightAffirmations";
+
+function readAffirmations() {
+  try {
+    const raw = localStorage.getItem(AFFIRMATION_KEY);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (err) {
+    console.warn("Failed to read affirmations", err);
+  }
+  return [];
+}
+
+function affirmationFallback(card) {
+  const key = card?.keywords?.find(Boolean) || "gentle becoming";
+  return `今晚我会温柔地相信 ${key}`;
+}
+
+function buildResonance(theme, card) {
+  if (!card) return null;
+  const weather = WEATHER_MOODS[theme] || WEATHER_MOODS.night;
+  const cardMood = inferCardMood(card);
+  const aligned = weather.mood === cardMood;
+  const score = Math.min(3, Math.max(1, weather.boost + (aligned ? 1 : 0)));
+  const descriptor = aligned ? cardMood : `${weather.mood} ↔ ${cardMood}`;
+  const note = aligned
+    ? "天气与牌面同频，情绪被温柔放大。"
+    : "天气像侧光，和牌意互补，让共鸣更立体。";
+
+  return {
+    line: `${weather.label} × ${card.name} → ${descriptor} +${score}`,
+    note,
+    score,
+  };
+}
+
+const CRYSTAL_BY_MOOD = {
+  intuition: { name: "Moonstone", note: "Soft intuition · soft dream guidance", emoji: "💎" },
+  introspection: { name: "Celestite", note: "Cloudlight clarity · listen inward", emoji: "💎" },
+  optimism: { name: "Sunstone", note: "Honey glow · warm bravery", emoji: "💎" },
+  change: { name: "Labradorite", note: "Aurora shield · cross the threshold", emoji: "💎" },
+  clarity: { name: "Clear Quartz", note: "Crystal focus · truth amplifier", emoji: "💎" },
+  soothing: { name: "Aquamarine", note: "Tide-smooth calm · breath steadiness", emoji: "💎" },
+  momentum: { name: "Carnelian", note: "Kindled drive · ember of action", emoji: "💎" },
+  mystery: { name: "Obsidian", note: "Night mirror · gentle protection", emoji: "💎" },
+};
+
+const CARD_CRYSTAL_OVERRIDES = {
+  sun: { name: "Sunstone", note: "Solar joy · playful confidence", emoji: "💎", mood: "optimism" },
+  moon: { name: "Moonstone", note: "Silky intuition · dream tides", emoji: "💎", mood: "intuition" },
+  star: { name: "Celestite", note: "Starlight hush · airy hope", emoji: "💎", mood: "introspection" },
+  priestess: { name: "Moonstone", note: "Veiled wisdom · lunar whisper", emoji: "💎", mood: "intuition" },
+  hermit: { name: "Amethyst", note: "Violet stillness · honest insight", emoji: "💎", mood: "introspection" },
+};
+
+function suggestCrystal(card) {
+  const fallback = { name: "Moonstone", note: "Soft intuition · soft dream guidance", emoji: "💎" };
+  if (!card) return fallback;
+
+  const override = CARD_CRYSTAL_OVERRIDES[card.id];
+  if (override) return override;
+
+  const mood = inferCardMood(card);
+  const pick = CRYSTAL_BY_MOOD[mood] || fallback;
+  return { ...pick, mood };
+}
+
+function buildSpreadCrystalSet(cards = []) {
+  const crystals = { past: null, present: null, future: null };
+  SPREAD_POSITIONS.forEach((pos, idx) => {
+    crystals[pos] = suggestCrystal(cards[idx]);
+  });
+  return crystals;
+}
+
+function parseCrystalBlock(block, fallback) {
+  if (!block) return fallback;
+  if (typeof block === "string") {
+    const name = block.trim();
+    if (!name) return fallback;
+    return { ...(fallback || {}), name };
+  }
+  if (typeof block === "object") {
+    const name = block.name || block.crystal || block.title || fallback?.name;
+    const note = block.note || block.reason || block.vibe || block.line || fallback?.note;
+    const emoji = block.emoji || fallback?.emoji;
+    return {
+      ...(fallback || {}),
+      ...(name ? { name } : null),
+      ...(note ? { note } : null),
+      ...(emoji ? { emoji } : null),
+    };
+  }
+  return fallback;
+}
+
+export default function App() {
+  const [lang, setLang] = useState(() => {
+    try {
+      const stored = localStorage.getItem(LANG_STORAGE_KEY);
+      if (stored && LANGS[stored]) return stored;
+    } catch (err) {
+      // ignore storage errors
+    }
+    return getBrowserLang();
+  });
+  const t = useI18n(lang);
+  const [stage, setStage] = useState("home");
+  const [deck, setDeck] = useState(() => shuffle(CARDS));
+  const [currentCard, setCurrentCard] = useState(null);
+  const [faceUp, setFaceUp] = useState(false);
+  const [reading, setReading] = useState("");
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareHint, setShareHint] = useState(() => t("share.hintReady"));
+  const [audioOn, setAudioOn] = useState(false);
+  const [trackId, setTrackId] = useState(AMBIENT_TRACKS[0].id);
+  const [secretSeed, setSecretSeed] = useState(null);
+  const [prophecyLine, setProphecyLine] = useState("");
+
+  const [spreadCards, setSpreadCards] = useState([]);
+  const [spreadFlips, setSpreadFlips] = useState([false, false, false]);
+  const [spreadReading, setSpreadReading] = useState({
+    past: "",
+    present: "",
+    future: "",
+  });
+  const [spreadLoading, setSpreadLoading] = useState(false);
+
+  const [bgTheme, setBgTheme] = useState("night");
+  const [moon, setMoon] = useState(() => getMoonCycle());
+  const ambientAudio = useRef(null);
+  const shareRef = useRef(null);
+  const [affirmation, setAffirmation] = useState("");
+  const [affirmationMeta, setAffirmationMeta] = useState(null);
+  const [affirmationLoading, setAffirmationLoading] = useState(false);
+  const [savedAffirmations, setSavedAffirmations] = useState(() => {
+    if (typeof window === "undefined") return [];
+    return readAffirmations();
+  });
+  const moonTone = useMemo(
+    () =>
+      moon
+        ? `Moon: ${moon.name} ${moon.emoji}. Mood tilt: ${moon.mood}. Action energy ${moon.actionScore}/100. Tone: ${moon.tone}.`
+        : "",
+    [moon]
+  );
+  const moonHint = moon ? moon.name.split("·")?.[0]?.trim() || moon.name : "";
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch (err) {
+      // ignore storage errors
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    setShareHint(t("share.hintReady"));
+  }, [lang]);
+
+  useEffect(() => {
+    const id = setInterval(() => setMoon(getMoonCycle()), 60 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const seed = rollSecretSeed();
+    setSecretSeed(seed);
+
+    if (seed?.hit && seed.id === "prophecy-line") {
+      const line = seed.payload?.line || pickOne(PROPHECY_LINES);
+      setProphecyLine(line);
+      if (!seed.payload?.line) {
+        const updated = { ...seed, payload: { ...(seed.payload || {}), line } };
+        try {
+          localStorage.setItem(SECRET_SEED_KEY, JSON.stringify(updated));
+        } catch (err) {
+          // ignore storage issue
+        }
+      }
+    }
+
+    if (seed?.hit && seed.id === "easter-aurora") {
+      setBgTheme("aurora");
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (secretSeed?.id === "easter-aurora") {
+        setBgTheme("aurora");
+        return;
+      }
+
+      const now = new Date();
+      const hour = now.getHours();
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          if (cancelled || secretSeed?.id === "easter-aurora") return;
+          const { latitude, longitude } = pos.coords;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const w = data.current_weather;
+          if (cancelled || secretSeed?.id === "easter-aurora") return;
+          setBgTheme(resolveTheme(hour, w.weathercode, w.is_day));
+        },
+        () => {
+          if (cancelled || secretSeed?.id === "easter-aurora") return;
+          setBgTheme(resolveTheme(hour, 0, 1));
+        }
+      );
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [secretSeed]);
+
+  useEffect(() => {
+    // Build audio element for selected ambient track; keeps autoplay off until the user taps
+    const picked =
+      AMBIENT_TRACKS.find((t) => t.id === trackId) || AMBIENT_TRACKS[0];
+    const audio = new Audio(picked.url);
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.volume = picked.volume ?? 0.45;
+    ambientAudio.current = audio;
+
+    return () => {
+      audio.pause();
+    };
+  }, [trackId]);
+
+  useEffect(() => {
+    const audio = ambientAudio.current;
+    if (!audio) return;
+
+    if (audioOn) {
+      audio.currentTime = 0;
+      audio.play().catch(() => setAudioOn(false));
+    } else {
+      audio.pause();
+    }
+  }, [audioOn, trackId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(AFFIRMATION_KEY, JSON.stringify(savedAffirmations));
+  }, [savedAffirmations]);
+
+  useEffect(() => {
+    if (!secretSeed?.hit || secretSeed.id !== "arcana-half") return;
+    setDeck((prev) => {
+      if (prev.find((c) => c.id === ARCANA_HALF_CARD.id)) return prev;
+      return shuffle([...prev, ARCANA_HALF_CARD]);
+    });
+  }, [secretSeed]);
+
+  function startDraw() {
+    setStage("draw");
+    setFaceUp(false);
+    setReading("");
+    setShareBusy(false);
+    setShareHint(t("share.hintReady"));
+    setAffirmation("");
+    setAffirmationMeta(null);
+    setAffirmationLoading(false);
+  }
+
+  function openDreamBottle() {
+    setStage("dream");
+  }
+
+  function openMysticChat() {
+    setStage("chat");
+  }
+
+  function openEncyclopedia() {
+    setStage("encyclopedia");
+  }
+
+  function startSpread() {
+    const pool =
+      secretSeed?.hit && secretSeed.id === "arcana-half"
+        ? [...CARDS, ARCANA_HALF_CARD]
+        : CARDS;
+    const picks = shuffle(pool).slice(0, 3);
+    setSpreadCards(picks);
+    setSpreadFlips([false, false, false]);
+    setSpreadReading({ past: "", present: "", future: "" });
+    setSpreadLoading(true);
+    setStage("three");
+    loadSpreadReading(picks);
+  }
+
+  async function loadAffirmation(card) {
+    setAffirmationLoading(true);
+    setAffirmationMeta({
+      id: `affirm-${Date.now()}`,
+      cardName: card?.name || "Night card",
+      cardImage: card?.image,
+      createdAt: Date.now(),
+    });
+
+    const prompt = `
+You are NightWhisper — a twilight oracle.
+
+Write ONE short night affirmation (8-18 words). Tone: soft, intimate, like whispering to yourself before sleep.
+- Blend English + 中文 is welcome.
+- Avoid imperatives; speak as "I".
+- Keep it single-line, no quotes, no bullet numbers.
+- Mood: pixel moonlight, tender hope.
+
+Card: ${card?.name || "Unknown"}
+Keywords: ${(card?.keywords || []).join(", ")}
+`;
+
+    const text = await askAI(prompt);
+    const line =
+      text
+        ?.split(/\n+/)
+        .map((l) => l.replace(/^[\d\.\-\•\s"]+/, "").replace(/"$/, "").trim())
+        .filter(Boolean)?.[0] || affirmationFallback(card);
+
+    setAffirmation(line);
+    setAffirmationLoading(false);
+  }
+
+  function saveCurrentAffirmation({ toggleFavorite = false, markCover = false } = {}) {
+    if (!affirmation) return;
+    const id = affirmationMeta?.id || `affirm-${Date.now()}`;
+    const base = affirmationMeta || {
+      id,
+      cardName: currentCard?.name || "Night card",
+      cardImage: currentCard?.image,
+      createdAt: Date.now(),
+    };
+
+    setAffirmationMeta((prev) => ({ ...(prev || base), id }));
+
+    setSavedAffirmations((prev) => {
+      const existing = prev.find((a) => a.id === id);
+      let next = prev;
+
+      if (existing) {
+        const updated = {
+          ...existing,
+          text: affirmation,
+        };
+        if (toggleFavorite) updated.favorite = !existing.favorite;
+        next = prev.map((a) => (a.id === id ? updated : a));
+      } else {
+        const newItem = {
+          ...base,
+          id,
+          text: affirmation,
+          favorite: toggleFavorite,
+          cover: false,
+        };
+        next = [newItem, ...prev].slice(0, 40);
+      }
+
+      if (markCover) {
+        next = next.map((a) => ({ ...a, cover: a.id === id }));
+      }
+
+      return next;
+    });
+  }
+
+  async function loadSpreadReading(picks) {
+    setSpreadLoading(true);
+    const [pastCard, presentCard, futureCard] = picks;
+
+    const prompt = `
+You are NightWhisper — a soft, dreamlike tarot oracle.
+
+${moonTone ? `Moon Cycle tone: ${moonTone}
+- Infuse every line with this lunar mood; at most one moon nod.
+` : ""}
+Generate a Past / Present / Future interpretation for three tarot cards.
+
+Return strictly a JSON object:
+{
+  "past": ["Symbolism", "Gentle Reminder", "Small Action"],
+  "present": ["Symbolism", "Gentle Reminder", "Small Action"],
+  "future": ["Symbolism", "Gentle Reminder", "Small Action"]
+}
+
+Rules:
+- All 9 lines must be unique and card-specific.
+- Each line 12-24 words, smooth and readable.
+- Tone: warm, poetic, night-soft, but practical enough to act on.
+- Use the card’s keywords naturally (no numbers, no extra markup).
+- Vary diction; avoid repeating openings or objects.
+- Each of the 9 lines must start with a different first word AND a different first two-word phrase.
+- Do not reuse the same main verb or the same main noun across the 9 lines.
+- Mix sentence shapes: at least one with a comma pause, one with “as …”, one with “while …”.
+- Symbolism = imagery of the card; Gentle Reminder = what to hold in heart; Small Action = one concrete act.
+- Output JSON only (no prose outside the JSON).
+
+Cards:
+Past: ${pastCard.name} (${pastCard.keywords.join(", ")})
+Present: ${presentCard.name} (${presentCard.keywords.join(", ")})
+Future: ${futureCard.name} (${futureCard.keywords.join(", ")})
+`;
+
+    const text = await askAI(prompt);
+
+    let parsed = null;
+    const jsonMatch = text?.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        parsed = JSON.parse(jsonMatch[0]);
+      } catch (e) {
+        parsed = null;
+      }
+    }
+
+    const toText = (val, card, label) => {
+      let arr = null;
+      if (Array.isArray(val)) arr = val;
+      else if (typeof val === "string") arr = val.split(/\n+/);
+
+      const cleaned = [];
+      if (arr) {
+        for (const line of arr) {
+          const t = String(line).trim();
+          if (!t) continue;
+          if (!cleaned.includes(t)) cleaned.push(t);
+          if (cleaned.length >= 3) break;
+        }
+      }
+
+      const finalArr =
+        cleaned.length >= 3
+          ? cleaned
+          : makeLocalLines(card, label, moonHint);
+
+      return finalArr.slice(0, 3).join("\n");
+    };
+
+    const safeReading = {
+      past: toText(parsed?.past, pastCard, "Past"),
+      present: toText(parsed?.present, presentCard, "Present"),
+      future: toText(parsed?.future, futureCard, "Future"),
+    };
+
+    setSpreadReading(safeReading);
+    setSpreadLoading(false);
+  }
+
+  function flipSpreadCard(idx) {
+    setSpreadFlips((prev) => {
+      const next = [...prev];
+      next[idx] = true;
+      return next;
+    });
+  }
+
+  async function handleSwipeUp() {
+    const cardPool =
+      secretSeed?.hit && secretSeed.id === "arcana-half"
+        ? [...CARDS, ARCANA_HALF_CARD]
+        : CARDS;
+    const [top, ...rest] = deck.length ? deck : shuffle(cardPool);
+
+    setDeck(rest);
+    setCurrentCard(top);
+    setFaceUp(true);
+    setStage("result");
+    setShareHint(t("share.hintReady"));
+    setAffirmation("");
+    setAffirmationMeta(null);
+    const affPromise = loadAffirmation(top);
+    const prompt = `
+You are NightWhisper — a gentle night oracle.
+
+${moonTone ? `Moon Cycle tone: ${moonTone}
+- Let the lines glow with this lunar mood; one moon mention max.
+` : ""}
+Generate exactly 3 lines, each 12-22 words:
+Symbolism — what the card evokes tonight.
+Gentle Reminder — a feeling to hold gently.
+Small Action — one doable act to try.
+
+Rules:
+- No repeated phrasing or filler.
+- Each line must have a DIFFERENT verb.
+- No “slow down”, “save a minute”, “let X rise”.
+- No repeating rhythm.
+- Max 40 characters.
+- Tone: dreamy, soft, but human and encouraging.
+- No bullet numbers or extra commentary.
+- Vary sentence shapes to avoid template vibes.
+
+Card: ${top.name}
+Keywords: ${top.keywords.join(", ")}
+`;
+
+    const text = await askAI(prompt);
+    const lines =
+      text
+        ?.split(/\n+/)
+        .map((l) => l.replace(/^[\d\.\-\•\s]+/, "").trim())
+        .filter(Boolean) || [];
+
+    const fallback = makeLocalLines(top, "", moonHint);
+
+    const picked = [];
+    for (const line of lines) {
+      if (picked.length >= 3) break;
+      if (!picked.includes(line) && line) picked.push(line);
+    }
+
+    const filled = [...picked, ...fallback].slice(0, 3);
+    setReading(filled.join("\n"));
+    setShareBusy(false);
+    setShareHint(t("share.hintReady"));
+    await affPromise;
+  }
+
+  function drawAgain() {
+    setStage("draw");
+    setFaceUp(false);
+    setReading("");
+    setShareBusy(false);
+    setShareHint(t("share.hintReady"));
+  }
+
+  async function buildShareImage() {
+    if (!currentCard || !shareRef.current || !reading) return;
+    setShareBusy(true);
+    setShareHint(t("share.hintBusy"));
+
+    // Wait a frame so hidden canvas lays out before capture
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+
+    try {
+      const canvas = await html2canvas(shareRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        width: 1080,
+        height: 1920,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      const slug = currentCard.name.replace(/\s+/g, "-").toLowerCase();
+      link.download = `nightwhisper-${slug}.png`;
+      link.href = dataUrl;
+      link.click();
+      setShareHint(t("share.hintDone"));
+    } catch (err) {
+      console.error("Share image failed:", err);
+      setShareHint(t("share.hintFail"));
+    } finally {
+      setShareBusy(false);
+    }
+  }
+
+  const readingLines = reading
+    ? reading
+        .split(/\n+/)
+        .map((l) => l.trim())
+        .filter(Boolean)
+    : [];
+  const resonance = useMemo(
+    () => buildResonance(bgTheme, currentCard),
+    [bgTheme, currentCard]
+  );
+  const currentTrack =
+    AMBIENT_TRACKS.find((t) => t.id === trackId) || AMBIENT_TRACKS[0];
+  const activeSecret = useMemo(() => {
+    if (!secretSeed?.hit) return null;
+    const meta = SECRET_POOL.find((s) => s.id === secretSeed.id);
+    if (!meta) return null;
+    return { ...meta, payload: secretSeed.payload };
+  }, [secretSeed]);
+  const starBoost = activeSecret?.id === "lost-star-stone";
+  const moonFragmentOn = activeSecret?.id === "moon-fragment";
+  const prophecyOn = activeSecret?.id === "prophecy-line";
+  const spreadLabels = {
+    past: t("spread.past"),
+    present: t("spread.present"),
+    future: t("spread.future"),
+  };
+  const coverAffirmation = savedAffirmations.find((a) => a.cover);
+  const currentAffId = affirmationMeta?.id;
+  const savedAff = currentAffId
+    ? savedAffirmations.find((a) => a.id === currentAffId)
+    : null;
+  const shareAffirmation = coverAffirmation?.text || affirmation;
+
+  return (
+    <div
+      className={`nw-root ${moonFragmentOn ? "moon-fragment-on" : ""} ${starBoost ? "star-stone-on" : ""} ${
+        activeSecret?.id === "easter-aurora" ? "aurora-on" : ""
+      }`}
+    >
+      <Background theme={bgTheme} />
+      <PixelStars theme={bgTheme} boost={starBoost} accent={moonFragmentOn ? "#cfe4ff" : undefined} />
+
+      <header className="nw-header">
+        <div className="logo">🌙 NightWhisper Tarot</div>
+        <div className="header-actions">
+          <LangSwitcher lang={lang} setLang={setLang} />
+          <div className="sound-palette" aria-label={t("header.ambientLabel")}>
+            {AMBIENT_TRACKS.map((track) => {
+              const active = track.id === trackId;
+              return (
+                <button
+                  key={track.id}
+                  className={`sound-chip ${active ? "active" : ""}`}
+                  onClick={() => setTrackId(track.id)}
+                  aria-pressed={active}
+                  title={`${t("header.switchTo")} ${track.label}`}
+                >
+                  <span className="sound-chip-name">{track.label}</span>
+                  <span className="sound-chip-note">{track.note}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button
+            className={`sound-btn ${audioOn ? "active" : ""}`}
+            onClick={() => setAudioOn((v) => !v)}
+            aria-pressed={audioOn}
+            title={
+              audioOn
+                ? `${t("header.pauseTrack")} ${currentTrack.label}`
+                : `${t("header.playTrack")} ${currentTrack.label}`
+            }
+          >
+            ♫
+          </button>
+        </div>
+      </header>
+
+      {activeSecret && (
+        <div className="secret-chip">
+          <div className="secret-chip-title">Secret Seed · {activeSecret.label}</div>
+          <div className="secret-chip-desc">{activeSecret.desc}</div>
+          {prophecyOn && prophecyLine && (
+            <div className="secret-prophecy">“{prophecyLine}”</div>
+          )}
+        </div>
+      )}
+
+      {moonFragmentOn && (
+        <div className="moon-fragments" aria-hidden="true">
+          {[...Array(6)].map((_, idx) => (
+            <span key={idx} className={`fragment piece-${idx}`} />
+          ))}
+        </div>
+      )}
+
+      {starBoost && (
+        <div className="star-stone" aria-hidden="true">
+          <div className="stone-core" />
+          <div className="stone-ring" />
+        </div>
+      )}
+
+      <main className="nw-main">
+        {stage === "home" && (
+          <div className="panel">
+            <h1>{t("home.title")}</h1>
+            <p className="tag">{t("home.tag")}</p>
+            {prophecyOn && prophecyLine && (
+              <div className="prophecy-line">
+                <span className="prophecy-dot">✶</span>
+                <span className="prophecy-text">{prophecyLine}</span>
+              </div>
+            )}
+
+            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} />
+
+            <div className="btn-stack">
+              <button className="btn-main" onClick={startDraw}>
+                {t("home.single")}
+              </button>
+              <button className="btn-secondary" onClick={startSpread}>
+                {t("home.spread")}
+              </button>
+              <button className="btn-secondary" onClick={openMysticChat}>
+                {t("home.chat")}
+              </button>
+              <button className="btn-secondary" onClick={openDreamBottle}>
+                {t("home.dreamBottle")}
+              </button>
+              <button className="btn-secondary" onClick={openEncyclopedia}>
+                {t("home.encyclopedia")}
+              </button>
+            </div>
+
+            <div className="bmc-box">
+              <div className="bmc-text">{t("home.coffee")}</div>
+              <a
+                href="https://www.buymeacoffee.com/dreamyarcanastudio"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Buy me a coffee"
+              >
+                <img
+                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=dreamyarcanastudio&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
+                  alt="Buy me a coffee"
+                />
+              </a>
+            </div>
+          </div>
+        )}
+
+        {stage === "draw" && (
+          <div className="panel">
+            <h2>{t("draw.title")}</h2>
+            <p className="tag">{t("draw.subtitle")}</p>
+
+            <TarotCard
+              card={null}
+              faceUp={false}
+              mode="draw"
+              onSwipeUp={handleSwipeUp}
+            />
+
+            <button className="btn-secondary" onClick={() => setStage("home")}>
+              {t("common.back")}
+            </button>
+          </div>
+        )}
+
+        {stage === "result" && currentCard && (
+          <div className="panel">
+            <h2>{t("result.title")}</h2>
+
+            <TarotCard card={currentCard} faceUp={faceUp} mode="result" />
+
+            <p className="tag" style={{ marginTop: 8 }}>{currentCard.name}</p>
+            {resonance && (
+              <div className="resonance-box">
+                <div className="resonance-title">🫧 情绪默契系数</div>
+                <div className="resonance-line">{resonance.line}</div>
+                <div className="resonance-note">{resonance.note}</div>
+              </div>
+            )}
+            <p className="reading">{reading}</p>
+
+            <div className="affirmation-block">
+              <div className="affirmation-visual" aria-hidden="true">
+                <div className="moon-halo" />
+                <div className="pixel-moon" />
+                <div className="pixel-moon-inner" />
+                <div className="drift-lights">
+                  <span className="drift-light drift-1" />
+                  <span className="drift-light drift-2" />
+                  <span className="drift-light drift-3" />
+                </div>
+              </div>
+
+              <div className="affirmation-copy">
+                <div className="affirmation-label">夜间肯定句</div>
+                <div className="affirmation-text">
+                  {affirmationLoading
+                    ? "月光正在写下你的句子…"
+                    : affirmation || "抽卡后自动生成一句柔软的夜间肯定句"}
+                </div>
+                <div className="affirmation-actions">
+                  <button
+                    className={`chip-btn ${savedAff ? "active" : ""}`}
+                    onClick={() => saveCurrentAffirmation()}
+                    disabled={!affirmation || affirmationLoading}
+                  >
+                    {savedAff ? "已保存" : "保存"}
+                  </button>
+                  <button
+                    className={`chip-btn ${savedAff?.favorite ? "active" : ""}`}
+                    onClick={() => saveCurrentAffirmation({ toggleFavorite: true })}
+                    disabled={!affirmation || affirmationLoading}
+                  >
+                    {savedAff?.favorite ? "已收藏 ♥" : "收藏 ♥"}
+                  </button>
+                  <button
+                    className={`chip-btn ${savedAff?.cover ? "active" : ""}`}
+                    onClick={() => saveCurrentAffirmation({ markCover: true })}
+                    disabled={!affirmation || affirmationLoading}
+                  >
+                    {savedAff?.cover ? "已设为封面" : "设为封面图"}
+                  </button>
+                </div>
+                {coverAffirmation && (
+                  <div className="affirmation-hint">
+                    封面句：{coverAffirmation.text}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="action-row">
+              <button className="btn-main" onClick={drawAgain}>
+                {t("common.drawAgain")}
+              </button>
+              <button className="btn-secondary" onClick={() => setStage("home")}>
+                {t("common.home")}
+              </button>
+            </div>
+
+            <div className="share-row">
+              <button
+                className="btn-main"
+                onClick={buildShareImage}
+                disabled={shareBusy || !reading}
+              >
+                {shareBusy ? t("share.rendering") : t("share.button")}
+              </button>
+              <div className="share-hint">{shareHint}</div>
+            </div>
+          </div>
+        )}
+
+        {stage === "three" && spreadCards.length === 3 && (
+          <div className="panel spread-panel">
+            <h2>{t("spread.title")}</h2>
+            <p className="tag">{t("spread.subtitle")}</p>
+
+            <div className="spread-grid">
+              {SPREAD_POSITIONS.map((pos, idx) => {
+                const card = spreadCards[idx];
+                return (
+                  <div className="spread-slot" key={pos}>
+                    <div className="spread-label">{spreadLabels[pos]}</div>
+                    <TarotCard
+                      card={card}
+                      faceUp={spreadFlips[idx]}
+                      mode="spread"
+                      onTap={() => flipSpreadCard(idx)}
+                    />
+                    <div className="spread-reading">
+                      {spreadFlips[idx]
+                        ? spreadReading[pos] ||
+                          (spreadLoading
+                            ? t("spread.loading")
+                            : t("spread.empty"))
+                        : t("spread.tap")}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="action-row">
+              <button className="btn-main" onClick={startSpread}>
+                {t("spread.new")}
+              </button>
+              <button className="btn-secondary" onClick={() => setStage("home")}>
+                {t("common.backHome")}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {stage === "chat" && (
+          <MysticChat onBack={() => setStage("home")} />
+        )}
+
+        {stage === "dream" && (
+          <DreamBottle
+            onBack={() => setStage("home")}
+            t={t}
+            lang={lang}
+            secretSeed={activeSecret}
+          />
+        )}
+
+        {stage === "encyclopedia" && (
+          <TarotEncyclopedia onBack={() => setStage("home")} t={t} />
+        )}
+      </main>
+
+      {currentCard && readingLines.length >= 1 && (
+        <div className="share-stage" aria-hidden="true">
+          <div className="share-canvas" ref={shareRef}>
+            <div className="share-bg-grid" />
+            <div className="share-glow" />
+
+            <div className="share-header">
+              <div className="share-brand">NightWhisper Tarot</div>
+              <div className="share-sub">Dream Pixel Oracle</div>
+            </div>
+
+            <div className="share-body">
+              <div className="share-card-frame">
+                <img src={currentCard.image} alt={currentCard.name} />
+              </div>
+              <div className="share-title">{currentCard.name}</div>
+
+              {shareAffirmation && (
+                <div className="share-affirmation">
+                  <div className="share-moon" />
+                  <div className="share-affirm-label">Night Affirmation</div>
+                  <div className="share-affirm-text">{shareAffirmation}</div>
+                </div>
+              )}
+
+              <div className="share-block">
+                <div className="share-block-title">AI 夜间箴言</div>
+                <div className="share-lines">
+                  {["Symbolism", "Gentle Reminder", "Small Action"].map(
+                    (label, idx) => (
+                      <div className="share-line" key={label}>
+                        <span className="share-label">{label}</span>
+                        <span className="share-text">
+                          {readingLines[idx] || ""}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="share-footer">
+              <div className="share-footer-line">NightWhisper Tarot</div>
+              <div className="share-footer-sub">
+                Hug the night. Listen softer.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

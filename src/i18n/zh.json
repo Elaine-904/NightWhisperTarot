@@ -1,0 +1,70 @@
+{
+  "common": {
+    "back": "返回",
+    "backHome": "返回首页",
+    "drawAgain": "再抽一张",
+    "home": "回到主页"
+  },
+  "header": {
+    "ambientLabel": "选择背景氛围",
+    "switchTo": "切换到",
+    "playTrack": "播放",
+    "pauseTrack": "暂停"
+  },
+  "home": {
+    "title": "抽一张夜语塔罗",
+    "tag": "夜色里有一条温柔的讯息。",
+    "single": "单张抽卡",
+    "spread": "三张牌阵（过去 / 现在 / 未来）",
+    "chat": "AI 占卜聊天室（Mystic Chat）",
+    "dreamBottle": "梦境瓶",
+    "encyclopedia": "塔罗图鉴",
+    "coffee": "喜欢夜晚的抽卡体验吗？请我喝杯咖啡支持创作 ✨"
+  },
+  "draw": {
+    "title": "上划抽牌",
+    "subtitle": "握住卡片，轻轻上滑。"
+  },
+  "result": {
+    "title": "今晚属于你的牌"
+  },
+  "share": {
+    "button": "保存分享图（PNG）",
+    "rendering": "生成中…",
+    "hintReady": "生成 PNG，适配 IG / 小红书 / 微信",
+    "hintBusy": "梦境像素渲染中…",
+    "hintDone": "已生成 PNG，直接分享",
+    "hintFail": "渲染失败，再点一次试试"
+  },
+  "spread": {
+    "title": "夜语三张牌阵",
+    "subtitle": "过去 / 现在 / 未来 —— 点击翻牌",
+    "past": "过去",
+    "present": "现在",
+    "future": "未来",
+    "loading": "正在呼唤夜语...",
+    "empty": "一个温柔的提示升起。",
+    "tap": "点击翻开",
+    "new": "新的三张牌阵"
+  },
+  "dream": {
+    "title": "梦境瓶",
+    "tag": "写下今晚的愿望——瓶子会替你保管。",
+    "hint": "点击像素瓶，翻看过往心愿。",
+    "label": "今晚的愿望",
+    "placeholder": "给夜空写一句轻柔的话...",
+    "saved": "已自动保存到瓶中",
+    "empty": "还没有心愿——瓶子在倾听。",
+    "today": "今天",
+    "coffee": "喜欢这个梦境瓶吗？请我喝杯咖啡支持创作 ✨"
+  },
+  "ency": {
+    "title": "塔罗图鉴",
+    "subtitle": "像素版大阿尔克那——点击任意卡片阅读。",
+    "pill": "22 张卡牌",
+    "major": "大阿尔克那",
+    "upright": "正位",
+    "reversed": "逆位",
+    "footer": "像素志氛围：柔和光晕、锐利边缘、夜空渐变。"
+  }
+}

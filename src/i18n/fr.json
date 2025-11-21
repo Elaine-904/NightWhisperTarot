@@ -1,0 +1,13 @@
+{
+  "home.title": "Tirer une carte Night Whisper",
+  "home.tagline": "Ce soir, tire une carte pour toi.",
+  "home.start": "Tirer une carte",
+  "home.chat": "Chat mystique IA (rituel tarot)",
+
+  "draw.title": "Choisis une carte dans la nuit",
+  "draw.subtitle": "Pense doucement à ce qui occupe ton cœur…",
+
+  "result.title": "La carte de ta nuit",
+  "btn.more": "En tirer une autre",
+  "btn.back": "Retour à l’accueil"
+}

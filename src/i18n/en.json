@@ -1,0 +1,70 @@
+{
+  "common": {
+    "back": "Back",
+    "backHome": "Back home",
+    "drawAgain": "Draw again",
+    "home": "Home"
+  },
+  "header": {
+    "ambientLabel": "Choose ambient track",
+    "switchTo": "Switch to",
+    "playTrack": "Play",
+    "pauseTrack": "Pause"
+  },
+  "home": {
+    "title": "Draw a Night Whisper",
+    "tag": "A gentle message waits in the quiet night.",
+    "single": "Single card",
+    "spread": "Three-card spread (Past / Present / Future)",
+    "chat": "AI Mystic Chat (tarot ritual)",
+    "dreamBottle": "Dream Bottle",
+    "encyclopedia": "Tarot Encyclopedia",
+    "coffee": "Love the night draw? Buy me a coffee to keep creating ✨"
+  },
+  "draw": {
+    "title": "Swipe up to draw",
+    "subtitle": "Hold the card — slide upward gently."
+  },
+  "result": {
+    "title": "Your card tonight"
+  },
+  "share": {
+    "button": "Save PNG for sharing",
+    "rendering": "Rendering...",
+    "hintReady": "Generate a PNG for IG / Xiaohongshu / WeChat",
+    "hintBusy": "Dream pixels rendering…",
+    "hintDone": "PNG ready — share anywhere",
+    "hintFail": "Rendering failed, try once more"
+  },
+  "spread": {
+    "title": "Three-card Night Spread",
+    "subtitle": "Past / Present / Future — tap each card to flip",
+    "past": "Past",
+    "present": "Present",
+    "future": "Future",
+    "loading": "Calling night whispers...",
+    "empty": "A gentle hint arises.",
+    "tap": "Tap to reveal",
+    "new": "New three-card spread"
+  },
+  "dream": {
+    "title": "Dream Bottle",
+    "tag": "Write tonight's wish — the bottle keeps it safe.",
+    "hint": "Tap the pixel bottle to peek at past wishes.",
+    "label": "Tonight's wish",
+    "placeholder": "A soft line for the night sky...",
+    "saved": "Auto-saved to your bottle",
+    "empty": "No wishes yet — the bottle is listening.",
+    "today": "today",
+    "coffee": "Enjoy the Dream Bottle? Buy me a coffee ✨"
+  },
+  "ency": {
+    "title": "Tarot Encyclopedia",
+    "subtitle": "Pixel Major Arcana index — tap a card to read.",
+    "pill": "22 cards",
+    "major": "Major Arcana",
+    "upright": "Upright",
+    "reversed": "Reversed",
+    "footer": "Pixel compendium vibe — soft glow, crisp edges, night-sky gradients."
+  }
+}
