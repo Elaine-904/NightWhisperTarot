@@ -178,13 +178,13 @@ function cleanLine(str) {
   return String(str).replace(/^[\-\d\.\•\s]+/, "").trim();
 }
 
-export default function MysticChat({ onBack }) {
+export default function MysticChat({ onBack, t }) {
   const [messages, setMessages] = useState([
     {
       id: "hello",
       role: "oracle",
       intro: true,
-      stardust: "写下你的问题。我会抽 1～3 张牌，送上夜语、星尘建议，也可能有星落事件。",
+      stardust: t("mystic.intro"),
     },
   ]);
   const [question, setQuestion] = useState("");
@@ -200,6 +200,17 @@ export default function MysticChat({ onBack }) {
       behavior: "smooth",
     });
   }, [messages]);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (!prev.length) return prev;
+      const updated = [...prev];
+      if (updated[0]?.intro) {
+        updated[0] = { ...updated[0], stardust: t("mystic.intro") };
+      }
+      return updated;
+    });
+  }, [t]);
 
   useEffect(() => {
     if (!starfall) return;
@@ -309,13 +320,11 @@ export default function MysticChat({ onBack }) {
       <div className="mystic-halo" aria-hidden="true" />
       <div className="mystic-header">
         <div>
-          <h2>Mystic Chat · 夜语占卜</h2>
-          <p className="tag">
-            提问 → 抽 1～3 张牌 → 夜语解释 + 星尘建议 · 也许迎来星落事件
-          </p>
+          <h2>{t("mystic.title")}</h2>
+          <p className="tag">{t("mystic.tagline")}</p>
         </div>
         <button className="btn-secondary slim" onClick={onBack}>
-          返回主界面
+          {t("mystic.back")}
         </button>
       </div>
 
@@ -351,7 +360,7 @@ export default function MysticChat({ onBack }) {
                     </div>
 
                     <div className="stardust">
-                      <span className="stardust-label">星尘建议</span>
+                      <span className="stardust-label">{t("mystic.stardustLabel")}</span>
                       <span className="stardust-text">{msg.stardust}</span>
                     </div>
 
@@ -371,7 +380,7 @@ export default function MysticChat({ onBack }) {
         {busy && (
           <div className="chat-row oracle">
             <div className="chat-bubble glass loading">
-              夜空在铺陈牌阵，星尘正在落下…
+              {t("mystic.loading")}
             </div>
           </div>
         )}
@@ -382,14 +391,14 @@ export default function MysticChat({ onBack }) {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="问我一个夜里正在想的念头…（Ctrl / Cmd + Enter 发送）"
+          placeholder={t("mystic.placeholder")}
           rows={3}
         />
         <div className="chat-actions">
           <button className="btn-main" onClick={handleSend} disabled={busy}>
-            {busy ? "解牌中…" : "发送占问"}
+            {busy ? t("mystic.button.sending") : t("mystic.button.send")}
           </button>
-          <div className="hint">每次回复都会重新抽牌，背景随牌色呼吸变化。</div>
+          <div className="hint">{t("mystic.hint")}</div>
         </div>
       </div>
 

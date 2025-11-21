@@ -1,13 +1,148 @@
 {
-  "home.title": "나이트 위스퍼 타로",
-  "home.tagline": "오늘 밤, 나를 위한 한 장의 카드.",
-  "home.start": "카드 뽑기",
-  "home.chat": "AI 미스틱 챗 (타로 의식)",
-
-  "draw.title": "밤 속에서 카드를 선택하세요",
-  "draw.subtitle": "요즘 마음을 무겁게 한 것을 떠올려보세요…",
-
-  "result.title": "오늘 밤 당신의 카드",
-  "btn.more": "다시 뽑기",
-  "btn.back": "홈으로 돌아가기"
+  "common": {
+    "back": "뒤로",
+    "backHome": "홈으로",
+    "drawAgain": "다시 뽑기",
+    "home": "홈"
+  },
+  "header": {
+    "ambientLabel": "배경 사운드 선택",
+    "switchTo": "변경",
+    "playTrack": "재생",
+    "pauseTrack": "정지"
+  },
+  "home": {
+    "title": "나이트 위스퍼를 뽑아보세요",
+    "tag": "조용한 밤에 부드러운 메시지가 기다립니다.",
+    "single": "단일 카드",
+    "spread": "세 장 스프레드 (과거 / 현재 / 미래)",
+    "chat": "AI 미스틱 채팅",
+    "dreamBottle": "드림 보틀",
+    "encyclopedia": "타로 백과",
+    "coffee": "밤의 카드가 마음에 든다면 커피로 창작을 응원해주세요 ✨"
+  },
+  "draw": {
+    "title": "위로 스와이프하여 카드를 뽑으세요",
+    "subtitle": "카드를 잡고 부드럽게 위로 밀어주세요."
+  },
+  "result": {
+    "title": "오늘 밤 당신의 카드"
+  },
+  "share": {
+    "button": "공유용 PNG 저장",
+    "rendering": "렌더링 중…",
+    "hintReady": "IG / 小红书 / WeChat용 PNG 생성",
+    "hintBusy": "꿈의 픽셀 렌더링 중…",
+    "hintDone": "PNG 준비됨 — 어디든 공유하세요",
+    "hintFail": "렌더링 실패, 다시 시도해보세요",
+    "brand": "NightWhisper Tarot",
+    "sub": "Dream Pixel Oracle",
+    "affirmLabel": "야간 확언",
+    "blockTitle": "AI 밤의 문장",
+    "labels": {
+      "symbolism": "상징",
+      "reminder": "부드러운 알림",
+      "action": "작은 실천"
+    },
+    "footerLine": "NightWhisper Tarot",
+    "footerSub": "밤을 안아주세요. 더 부드럽게 귀 기울여요."
+  },
+  "spread": {
+    "title": "밤의 세 장 스프레드",
+    "subtitle": "과거 / 현재 / 미래 — 각 카드를 눌러 펼치세요",
+    "past": "과거",
+    "present": "현재",
+    "future": "미래",
+    "loading": "밤의 속삭임을 기다리는 중…",
+    "empty": "부드러운 힌트가 떠오릅니다.",
+    "tap": "눌러서 펼치기",
+    "new": "새로운 세 장"
+  },
+  "dream": {
+    "title": "드림 보틀",
+    "tag": "오늘 밤의 소원을 적어보세요 — 병이 지켜줄 거예요.",
+    "hint": "픽셀 병을 눌러 과거 소원을 확인해보세요.",
+    "label": "오늘 밤의 소원",
+    "placeholder": "밤하늘에 부드러운 한 줄을…",
+    "saved": "병에 자동 저장됨",
+    "empty": "아직 소원이 없어요 — 병이 듣고 있어요.",
+    "today": "오늘",
+    "coffee": "이 드림 보틀이 마음에 드나요? 커피로 응원해주세요 ✨"
+  },
+  "ency": {
+    "title": "타로 백과",
+    "subtitle": "픽셀 메이저 아르카나 인덱스 — 카드를 눌러 읽기.",
+    "pill": "22장",
+    "major": "메이저 아르카나",
+    "upright": "정위",
+    "reversed": "역위",
+    "footer": "픽셀 아카이브 분위기 — 부드러운 광채, 선명한 윤곽, 밤하늘 그러데이션."
+  },
+  "resonance": {
+    "title": "🫧 공명",
+    "noteMatched": "날씨와 카드가 조화를 이루어 감정을 부드럽게 키워줍니다.",
+    "noteContrasting": "날씨가 보조 광처럼 작용해 카드의 울림을 더 입체적으로 합니다."
+  },
+  "affirmation": {
+    "label": "밤의 확언",
+    "loading": "달빛이 문장을 쓰고 있어요…",
+    "default": "카드를 뽑으면 조용한 밤의 확언이 생성됩니다",
+    "save": "저장",
+    "saved": "저장됨",
+    "favorite": "즐겨찾기 ♥",
+    "favoriteActive": "즐겨찾기 완료 ♥",
+    "cover": "표지로 설정",
+    "coverActive": "표지 설정됨",
+    "coverHint": "표지 문장: {line}"
+  },
+  "secretChip": {
+    "title": "Secret Seed"
+  },
+  "moon": {
+    "pill": "문 사이클 엔진",
+    "phaseLabel": "달의 모습",
+    "description": "달을 따라 리딩이 흐릅니다. 기분: {mood}. 행동력 {actionScore}/100. 톤: {tone}.",
+    "illumination": "{pct}% 빛",
+    "age": "Day {day} / {cycle}",
+    "metric": {
+      "action": "행동력",
+      "tone": "무드 톤",
+      "tip": "힌트"
+    },
+    "progressLabel": "달 진행 {progress}%",
+    "progressMeta": "보름달까지 {toFull}일 · 그믐까지 {toNew}일",
+    "rituals": {
+      "full": {
+        "title": "보름달 축복",
+        "desc": "보름은 행동력과 정직한 빛을 안겨줘요. 축복을 써보세요.",
+        "buttonActive": "축복 받기",
+        "buttonLocked": "보름달에 잠금 해제",
+        "footerActive": "빛이 내려와요 ✦",
+        "footerLocked": "보름달까지 {toFull}일"
+      },
+      "new": {
+        "title": "그믐 소원",
+        "desc": "그믐은 씨앗의 밤. Dream Bottle에 소원을 담고 빛을 기다려보세요.",
+        "buttonActive": "Dream Bottle에 쓰기",
+        "buttonLocked": "그믐에 잠금 해제",
+        "footerActive": "병 입구가 열렸어요",
+        "footerLocked": "그믐까지 {toNew}일"
+      }
+    },
+    "toneHint": "리딩 톤은 {toneTag}을 따릅니다"
+  },
+  "mystic": {
+    "title": "미스틱 채팅 · 야간 오라클",
+    "tagline": "질문 → 1~3장 카드 → 야간 문장 + 스타더스트 조언 · 어쩌면 스타폴도",
+    "back": "메인으로 돌아가기",
+    "intro": "질문을 적어주세요. 1~3장의 카드를 뽑고, 밤말과 스타더스트 조언, 그리고 때론 별빛 메시지를 전해 드릴게요.",
+    "placeholder": "밤에 떠도는 생각을 물어보세요…（Ctrl / Cmd + Enter로 전송）",
+    "button": {
+      "send": "리딩 전송",
+      "sending": "카드 해석 중…"
+    },
+    "hint": "답변마다 새 카드가 뽑히며, 배경은 카드 색을 따라 숨을 쉽니다.",
+    "stardustLabel": "스타더스트 조언",
+    "loading": "밤이 카드 배열을 펼치고, 스타더스트가 떨어지는 중…"
+  }
 }

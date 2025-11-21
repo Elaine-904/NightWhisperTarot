@@ -1,13 +1,166 @@
 {
-  "home.title": "ナイトウィスパー・タロット",
-  "home.tagline": "今夜、自分のために一枚引いてみて。",
-  "home.start": "カードを引く",
-  "home.chat": "AI ミスティックチャット（占い）",
-
-  "draw.title": "夜の中から一枚選んで",
-  "draw.subtitle": "最近心にあることを、そっと思い浮かべて……",
-
-  "result.title": "今夜のあなたへのカード",
-  "btn.more": "もう一枚引く",
-  "btn.back": "ホームへ戻る"
+  "common": {
+    "back": "戻る",
+    "backHome": "ホームに戻る",
+    "drawAgain": "もう一度引く",
+    "home": "ホーム"
+  },
+  "header": {
+    "ambientLabel": "環境音を選ぶ",
+    "switchTo": "切り替え",
+    "playTrack": "再生",
+    "pauseTrack": "停止"
+  },
+  "home": {
+    "title": "ナイトウィスパーを引いてみて",
+    "tag": "静かな夜にそっと届くやさしいメッセージ。",
+    "single": "シングルカード",
+    "spread": "三枚スプレッド（過去/現在/未来）",
+    "chat": "AI ミスティックチャット",
+    "dreamBottle": "ドリームボトル",
+    "encyclopedia": "タロット百科",
+    "coffee": "夜の引きが好きですか？コーヒーで支援してください ✨"
+  },
+  "draw": {
+    "title": "上にスワイプしてカードを引く",
+    "subtitle": "カードを手にして、そっと上へ滑らせて。"
+  },
+  "result": {
+    "title": "今夜のあなたのカード",
+    "crystalLabel": "クリスタルガーディアン",
+    "crystalNoteFallback": "静かな夜のエネルギーが心を優しく守ってくれます。",
+    "crystalEnergy": "エネルギー",
+    "dailyCrystalTitle": "今夜のクリスタル"
+  },
+  "share": {
+    "button": "共有用 PNG を保存",
+    "rendering": "レンダリング中…",
+    "hintReady": "IG / 小红书 / WeChat 向け PNG を生成",
+    "hintBusy": "夢のピクセルをレンダリング中…",
+    "hintDone": "PNG 完成 — 好きな場所で共有",
+    "hintFail": "レンダリングに失敗しました。もう一度お試しください",
+    "brand": "NightWhisper Tarot",
+    "sub": "Dream Pixel Oracle",
+    "affirmLabel": "ナイトアファメーション",
+    "blockTitle": "AI ナイトライン",
+    "labels": {
+      "symbolism": "象徴",
+      "reminder": "やさしいリマインダー",
+      "action": "小さな行動"
+    },
+    "footerLine": "NightWhisper Tarot",
+    "footerSub": "夜を抱きしめて。そっと耳を澄ませて。"
+  },
+  "spread": {
+    "title": "三枚のナイトスプレッド",
+    "subtitle": "過去 / 現在 / 未来 — 各カードをタップしてめくる",
+    "past": "過去",
+    "present": "現在",
+    "future": "未来",
+    "loading": "夜の囁きを呼び込んでいます…",
+    "empty": "優しいヒントが浮かび上がります。",
+    "tap": "タップしてめくる",
+    "new": "新しい三枚スプレッド"
+  },
+  "dream": {
+    "title": "ドリームボトル",
+    "tag": "今夜の願いを綴って — 瓶がそっと守ります。",
+    "hint": "ピクセルボトルをタップして過去の願いを覗いてみて。",
+    "label": "今夜の願い",
+    "placeholder": "夜空にやさしい一行を…",
+    "saved": "自動でボトルに保存しました",
+    "empty": "まだ願いはないようです — 瓶が耳を澄ませています。",
+    "today": "今日",
+    "crystalGardenTitle": "クリスタルガーデン",
+    "crystalGardenHint": "カード、タスク、ログインでクリスタルを集めましょう。",
+    "dailyCrystalLabel": "今夜のクリスタル",
+    "crystalEnergyLevel": "エネルギー",
+    "crystalEmpty": "まだクリスタルがありません。カードを引いて咲かせよう。",
+    "crystalCollected": "収集日",
+    "crystalSelectHint": "クリスタルをタップして夜のエネルギーと今日の効用を見る",
+    "crystalTasks": "タスク",
+    "taskLoginLabel": "ログインで光",
+    "taskLoginDesc": "ログインしてムーンストーンのやわらかさを受け取る",
+    "taskWishLabel": "願いメモ",
+    "taskWishDesc": "願いを瓶に書いてローズクォーツのぬくもりを呼び込む",
+    "taskRitualLabel": "小さな儀式",
+    "taskRitualDesc": "小さな儀式でシトリンの光を集める",
+    "coffee": "このドリームボトルが好きですか？コーヒーで支援してください ✨"
+  },
+  "ency": {
+    "title": "タロット百科",
+    "subtitle": "ピクセルメジャーアルカナ一覧 — カードをタップして読む。",
+    "pill": "22枚",
+    "major": "メジャーアルカナ",
+    "upright": "正位置",
+    "reversed": "逆位置",
+    "footer": "ピクセルコンペンディアムの雰囲気 — 柔らかな光、シャープなエッジ、夜空グラデーション。"
+  },
+  "resonance": {
+    "title": "🫧 共鳴",
+    "noteMatched": "天気とカードが調和し、感情がやわらかく増幅されます。",
+    "noteContrasting": "天候は補助光のように作用し、共鳴を立体的にします。"
+  },
+  "affirmation": {
+    "label": "夜の肯定文",
+    "loading": "月光が文を紡いでいます…",
+    "default": "カードを引くとやわらかな夜の肯定文が届きます",
+    "save": "保存",
+    "saved": "保存済み",
+    "favorite": "お気に入り ♥",
+    "favoriteActive": "お気に入り済み ♥",
+    "cover": "カバーに設定",
+    "coverActive": "カバー設定済み",
+    "coverHint": "カバー文：{line}"
+  },
+  "secretChip": {
+    "title": "Secret Seed"
+  },
+  "moon": {
+    "pill": "ムーンサイクルエンジン",
+    "phaseLabel": "月の位相",
+    "description": "月に寄り添いながらリーディングが変わります。気分：{mood} · 行動力 {actionScore}/100 · トーン：{tone}。",
+    "illumination": "{pct}% 光っている",
+    "age": "Day {day} / {cycle}",
+    "metric": {
+      "action": "行動力",
+      "tone": "ムードトーン",
+      "tip": "ヒント"
+    },
+    "progressLabel": "月の進行 {progress}%",
+    "progressMeta": "満月まで {toFull}日 · 新月まで {toNew}日",
+    "rituals": {
+      "full": {
+        "title": "満月の祝福",
+        "desc": "満月は行動力と正直な輝きをもたらします。祝福を書いて、あなたや友人へ。",
+        "buttonActive": "祝福を受け取る",
+        "buttonLocked": "満月で解放",
+        "footerActive": "光が降りてきた ✦",
+        "footerLocked": "満月まで {toFull}日"
+      },
+      "new": {
+        "title": "新月の願い",
+        "desc": "新月は種まきの夜。Dream Bottleに願いを書き、光を待ちましょう。",
+        "buttonActive": "Dream Bottleに記す",
+        "buttonLocked": "新月で解放",
+        "footerActive": "瓶口が開いています",
+        "footerLocked": "新月まで {toNew}日"
+      }
+    },
+    "toneHint": "リーディングのトーンは {toneTag} に沿います"
+  },
+  "mystic": {
+    "title": "ミスティックチャット · ナイトオラクル",
+    "tagline": "質問 → 1〜3枚のカード → 夜の言葉 + スターダストアドバイス → ときに星落ち",
+    "back": "メインに戻る",
+    "intro": "質問をどうぞ。1〜3枚のカードを引き、夜の言葉とスターダストアドバイス、場合によっては星落ちをお届けします。",
+    "placeholder": "夜に浮かぶ想いを問いかけて…（Ctrl / Cmd + Enter で送信）",
+    "button": {
+      "send": "占いを送る",
+      "sending": "カードを読む…"
+    },
+    "hint": "返信ごとにカードが再抽選され、背景はカードの色に合わせて息をします。",
+    "stardustLabel": "スターダストアドバイス",
+    "loading": "夜空がカードを並べ、スターダストが降り注いでいます…"
+  }
 }

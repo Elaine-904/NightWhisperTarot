@@ -1,6 +1,34 @@
 import React, { useEffect, useMemo, useState } from "react";
+import CrystalGarden from "./CrystalGarden";
 
 const STORAGE_KEY = "dreamBottleWishes";
+
+const PHASE_CRYSTALS = {
+  new: {
+    id: "obsidian",
+    emoji: "🖤",
+    accent: "#1a1a1a",
+  },
+  first: {
+    id: "citrine",
+    emoji: "🌟",
+    accent: "#f6ce55",
+  },
+  full: {
+    id: "moonstone",
+    emoji: "🌙",
+    accent: "#cde9ff",
+  },
+  last: {
+    id: "labradorite",
+    emoji: "🌌",
+    accent: "#7380ff",
+  },
+};
+
+function resolveCrystalPhase(phaseKey) {
+  return PHASE_CRYSTALS[phaseKey] || PHASE_CRYSTALS.new;
+}
 
 function readStored() {
   try {
@@ -22,7 +50,16 @@ function formatDateLabel(dateStr, todayKey, locale, todayLabel) {
   return dateStr;
 }
 
-export default function DreamBottle({ onBack, t, lang, secretSeed }) {
+export default function DreamBottle({
+  onBack,
+  t,
+  lang,
+  secretSeed,
+  moon,
+  crystals = [],
+  dailyCrystal,
+  onGrantCrystal,
+}) {
   const dateLocale =
     {
       zh: "zh-CN",
@@ -41,6 +78,12 @@ export default function DreamBottle({ onBack, t, lang, secretSeed }) {
   });
   const [showHistory, setShowHistory] = useState(false);
   const [savedPing, setSavedPing] = useState(false);
+  const crystalPhaseKey = moon?.phaseKey || "new";
+  const crystalMeta = resolveCrystalPhase(crystalPhaseKey);
+  const crystalAccent = crystalMeta.accent;
+  const crystalName = t(`dream.crystal.${crystalMeta.id}.name`);
+  const crystalNote = t(`dream.crystal.${crystalMeta.id}.note`);
+  const crystalPhaseLabel = moon?.name || t("dream.crystalPhaseFallback");
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes));
@@ -75,11 +118,47 @@ export default function DreamBottle({ onBack, t, lang, secretSeed }) {
 
   return (
     <div className="panel dream-panel">
-      <h2>{t("dream.title")}</h2>
+      <h2 className="dream-title">
+        <span className="moon-icon" aria-hidden="true">
+          🌙
+        </span>
+        <span className="title-text">{t("dream.title")}</span>
+        <span className="title-glimmer" aria-hidden="true" />
+      </h2>
       <p className="tag">{t("dream.tag")}</p>
       {secretBottle && bottleLine && (
         <div className="secret-bottle-line">{bottleLine}</div>
       )}
+      <div
+        className="crystal-card"
+        style={{
+          borderColor: crystalAccent,
+          boxShadow: crystalAccent ? `0 14px 32px ${crystalAccent}33` : undefined,
+        }}
+      >
+        <div
+          className="crystal-emoji"
+          aria-hidden="true"
+          style={{
+            color: crystalAccent,
+            boxShadow: crystalAccent ? `0 0 18px ${crystalAccent}44` : undefined,
+          }}
+        >
+          {crystalMeta.emoji}
+        </div>
+        <div className="crystal-copy">
+          <div className="crystal-intro">{t("dream.crystalIntro")}</div>
+          <div className="crystal-phase">
+            <span className="crystal-phase-label">{t("dream.crystalPhaseLabel")}</span>
+            <span className="crystal-phase-value">
+              {crystalPhaseLabel}
+              {moon?.emoji ? ` ${moon.emoji}` : ""}
+            </span>
+          </div>
+          <div className="crystal-name">{crystalName}</div>
+          <div className="crystal-note">{crystalNote}</div>
+        </div>
+      </div>
 
       <div className="dream-bottle-wrap">
         <div className="aura-flow" aria-hidden="true">
@@ -106,6 +185,15 @@ export default function DreamBottle({ onBack, t, lang, secretSeed }) {
           <div className="bottle-sparkle sparkle-3" />
         </div>
         <div className="bottle-hint">{t("dream.hint")}</div>
+      </div>
+
+      <div className="dream-garden-wrapper">
+        <CrystalGarden
+          crystals={crystals}
+          dailyCrystal={dailyCrystal}
+          onGrantCrystal={onGrantCrystal}
+          t={t}
+        />
       </div>
 
       <label className="dream-label" htmlFor="wish-input">

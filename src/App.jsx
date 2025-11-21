@@ -10,6 +10,12 @@ import MysticChat from "./components/MysticChat";
 import LangSwitcher from "./components/LangSwitcher";
 import { getBrowserLang, LANGS, useI18n } from "./i18n";
 import { CARDS } from "./data/cards";
+import {
+  CRYSTAL_LIBRARY,
+  CARD_CRYSTAL_MAP,
+  makeCrystalSnapshot,
+  recommendCrystal,
+} from "./data/crystals";
 import { askAI } from "./api/aiClient";
 import { getMoonCycle } from "./moon";
 import html2canvas from "html2canvas";
@@ -40,6 +46,31 @@ const AMBIENT_TRACKS = [
     volume: 0.5,
   },
 ];
+
+const CRYSTAL_COLLECTION_KEY = "nightCrystals";
+const CRYSTAL_IDS = Object.keys(CRYSTAL_LIBRARY);
+
+function readCrystalGarden() {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = JSON.parse(localStorage.getItem(CRYSTAL_COLLECTION_KEY));
+    if (Array.isArray(stored)) return stored;
+  } catch (err) {
+    console.warn("Failed to read crystals:", err);
+  }
+  return [];
+}
+
+function getGuardianCrystalId(card) {
+  if (!card) return null;
+  const override = CARD_CRYSTAL_MAP[card.id];
+  if (override) return override;
+  if (!CRYSTAL_IDS.length) return null;
+  const hash = card.id
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return CRYSTAL_IDS[hash % CRYSTAL_IDS.length];
+}
 
 const SECRET_SEED_KEY = "nightwhisper.secretSeed";
 const PROPHECY_LINES = [
@@ -261,7 +292,7 @@ function affirmationFallback(card) {
   return `今晚我会温柔地相信 ${key}`;
 }
 
-function buildResonance(theme, card) {
+function buildResonance(theme, card, t) {
   if (!card) return null;
   const weather = WEATHER_MOODS[theme] || WEATHER_MOODS.night;
   const cardMood = inferCardMood(card);
@@ -269,8 +300,8 @@ function buildResonance(theme, card) {
   const score = Math.min(3, Math.max(1, weather.boost + (aligned ? 1 : 0)));
   const descriptor = aligned ? cardMood : `${weather.mood} ↔ ${cardMood}`;
   const note = aligned
-    ? "天气与牌面同频，情绪被温柔放大。"
-    : "天气像侧光，和牌意互补，让共鸣更立体。";
+    ? t("resonance.noteMatched")
+    : t("resonance.noteContrasting");
 
   return {
     line: `${weather.label} × ${card.name} → ${descriptor} +${score}`,
@@ -370,9 +401,15 @@ export default function App() {
     future: "",
   });
   const [spreadLoading, setSpreadLoading] = useState(false);
+  const [spreadCrystals, setSpreadCrystals] = useState(() => buildSpreadCrystalSet([]));
 
   const [bgTheme, setBgTheme] = useState("night");
   const [moon, setMoon] = useState(() => getMoonCycle());
+  const [collectedCrystals, setCollectedCrystals] = useState(() => {
+    if (typeof window === "undefined") return [];
+    return readCrystalGarden();
+  });
+  const [lastGuardianCrystal, setLastGuardianCrystal] = useState(null);
   const ambientAudio = useRef(null);
   const shareRef = useRef(null);
   const [affirmation, setAffirmation] = useState("");
@@ -497,6 +534,43 @@ export default function App() {
   }, [savedAffirmations]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(
+        CRYSTAL_COLLECTION_KEY,
+        JSON.stringify(collectedCrystals)
+      );
+    } catch (err) {
+      console.warn("Failed to persist crystals:", err);
+    }
+  }, [collectedCrystals]);
+
+  function addCrystalSnapshot(snapshot) {
+    if (!snapshot) return null;
+    setCollectedCrystals((prev) => {
+      const filtered = prev.filter((c) => c.id !== snapshot.id);
+      return [snapshot, ...filtered].slice(0, 24);
+    });
+    return snapshot;
+  }
+
+  function grantCrystal(id, context = {}) {
+    if (!id) return null;
+    const snapshot = makeCrystalSnapshot(id, context);
+    return snapshot ? addCrystalSnapshot(snapshot) : null;
+  }
+
+  function grantCardGuardian(card) {
+    if (!card) return null;
+    const guardianId = getGuardianCrystalId(card);
+    if (!guardianId) return null;
+    return grantCrystal(guardianId, {
+      source: "draw",
+      cardId: card.id,
+    });
+  }
+
+  useEffect(() => {
     if (!secretSeed?.hit || secretSeed.id !== "arcana-half") return;
     setDeck((prev) => {
       if (prev.find((c) => c.id === ARCANA_HALF_CARD.id)) return prev;
@@ -534,11 +608,16 @@ export default function App() {
         : CARDS;
     const picks = shuffle(pool).slice(0, 3);
     setSpreadCards(picks);
+    setSpreadCrystals(buildSpreadCrystalSet(picks));
     setSpreadFlips([false, false, false]);
     setSpreadReading({ past: "", present: "", future: "" });
     setSpreadLoading(true);
     setStage("three");
     loadSpreadReading(picks);
+  }
+
+  function openCrystalCollect() {
+    startSpread();
   }
 
   async function loadAffirmation(card) {
@@ -628,11 +707,11 @@ ${moonTone ? `Moon Cycle tone: ${moonTone}
 ` : ""}
 Generate a Past / Present / Future interpretation for three tarot cards.
 
-Return strictly a JSON object:
+Return strictly a JSON object shaped like:
 {
-  "past": ["Symbolism", "Gentle Reminder", "Small Action"],
-  "present": ["Symbolism", "Gentle Reminder", "Small Action"],
-  "future": ["Symbolism", "Gentle Reminder", "Small Action"]
+  "past": { "lines": ["Symbolism", "Gentle Reminder", "Small Action"], "crystal": "Aquamarine" },
+  "present": { "lines": ["Symbolism", "Gentle Reminder", "Small Action"], "crystal": "Celestite" },
+  "future": { "lines": ["Symbolism", "Gentle Reminder", "Small Action"], "crystal": "Sunstone" }
 }
 
 Rules:
@@ -645,6 +724,7 @@ Rules:
 - Do not reuse the same main verb or the same main noun across the 9 lines.
 - Mix sentence shapes: at least one with a comma pause, one with “as …”, one with “while …”.
 - Symbolism = imagery of the card; Gentle Reminder = what to hold in heart; Small Action = one concrete act.
+- Include a “crystal” entry per card that fits its symbolic energy (short name or phrase).
 - Output JSON only (no prose outside the JSON).
 
 Cards:
@@ -665,19 +745,26 @@ Future: ${futureCard.name} (${futureCard.keywords.join(", ")})
       }
     }
 
+    const fallbackCrystals = buildSpreadCrystalSet(picks);
+
     const toText = (val, card, label) => {
-      let arr = null;
+      let arr = [];
       if (Array.isArray(val)) arr = val;
-      else if (typeof val === "string") arr = val.split(/\n+/);
+      else if (typeof val === "object" && val !== null) {
+        if (Array.isArray(val.lines)) arr = val.lines;
+        else if (Array.isArray(val.text)) arr = val.text;
+        else if (typeof val.lines === "string") arr = val.lines.split(/\n+/);
+        else if (typeof val.text === "string") arr = val.text.split(/\n+/);
+      } else if (typeof val === "string") {
+        arr = val.split(/\n+/);
+      }
 
       const cleaned = [];
-      if (arr) {
-        for (const line of arr) {
-          const t = String(line).trim();
-          if (!t) continue;
-          if (!cleaned.includes(t)) cleaned.push(t);
-          if (cleaned.length >= 3) break;
-        }
+      for (const line of arr || []) {
+        const t = String(line).trim();
+        if (!t) continue;
+        if (!cleaned.includes(t)) cleaned.push(t);
+        if (cleaned.length >= 3) break;
       }
 
       const finalArr =
@@ -688,13 +775,56 @@ Future: ${futureCard.name} (${futureCard.keywords.join(", ")})
       return finalArr.slice(0, 3).join("\n");
     };
 
+    const getCrystalBlock = (source) => {
+      if (!source) return null;
+      if (Array.isArray(source)) return null;
+      if (typeof source === "object") {
+        const name =
+          source.crystal ??
+          source.crystalName ??
+          source.crystal_name ??
+          source.name ??
+          source.title;
+        if (name) {
+          return {
+            name,
+            note:
+              source.crystalNote ||
+              source.crystal_note ||
+              source.note ||
+              source.description,
+            emoji: source.crystalEmoji || source.emoji,
+          };
+        }
+        if (typeof source.crystal === "string" || typeof source.crystal === "object") {
+          return source.crystal;
+        }
+      }
+      if (typeof source === "string") {
+        const match = source.match(/"crystal":\s*"([^"]+)"/i);
+        if (match) return match[1];
+        return source;
+      }
+      return null;
+    };
+
     const safeReading = {
       past: toText(parsed?.past, pastCard, "Past"),
       present: toText(parsed?.present, presentCard, "Present"),
       future: toText(parsed?.future, futureCard, "Future"),
     };
 
+    const crystals = {};
+    SPREAD_POSITIONS.forEach((pos) => {
+      const entry = parsed?.[pos];
+      const fallback = fallbackCrystals[pos];
+      const crystalSource =
+        getCrystalBlock(entry) ?? getCrystalBlock(parsed?.crystals?.[pos]);
+      crystals[pos] = parseCrystalBlock(crystalSource, fallback);
+    });
+
     setSpreadReading(safeReading);
+    setSpreadCrystals((prev) => ({ ...prev, ...crystals }));
     setSpreadLoading(false);
   }
 
@@ -721,6 +851,10 @@ Future: ${futureCard.name} (${futureCard.keywords.join(", ")})
     setAffirmation("");
     setAffirmationMeta(null);
     const affPromise = loadAffirmation(top);
+    const guardianCrystal = grantCardGuardian(top);
+    if (guardianCrystal) {
+      setLastGuardianCrystal(guardianCrystal);
+    }
     const prompt = `
 You are NightWhisper — a gentle night oracle.
 
@@ -815,8 +949,19 @@ Keywords: ${top.keywords.join(", ")}
         .filter(Boolean)
     : [];
   const resonance = useMemo(
-    () => buildResonance(bgTheme, currentCard),
-    [bgTheme, currentCard]
+    () => buildResonance(bgTheme, currentCard, t),
+    [bgTheme, currentCard, t]
+  );
+  const currentCrystal = useMemo(() => suggestCrystal(currentCard), [currentCard]);
+  const guardianCrystalDisplay = lastGuardianCrystal || currentCrystal;
+  const dailyCrystal = useMemo(
+    () =>
+      recommendCrystal({
+        weatherKey: bgTheme,
+        moonPhase: moon?.phaseKey,
+        emotion: inferCardMood(currentCard),
+      }),
+    [bgTheme, moon, currentCard]
   );
   const currentTrack =
     AMBIENT_TRACKS.find((t) => t.id === trackId) || AMBIENT_TRACKS[0];
@@ -888,7 +1033,9 @@ Keywords: ${top.keywords.join(", ")}
 
       {activeSecret && (
         <div className="secret-chip">
-          <div className="secret-chip-title">Secret Seed · {activeSecret.label}</div>
+          <div className="secret-chip-title">
+            {t("secretChip.title")} · {activeSecret.label}
+          </div>
           <div className="secret-chip-desc">{activeSecret.desc}</div>
           {prophecyOn && prophecyLine && (
             <div className="secret-prophecy">“{prophecyLine}”</div>
@@ -923,7 +1070,7 @@ Keywords: ${top.keywords.join(", ")}
               </div>
             )}
 
-            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} />
+            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} t={t} />
 
             <div className="btn-stack">
               <button className="btn-main" onClick={startDraw}>
@@ -931,6 +1078,9 @@ Keywords: ${top.keywords.join(", ")}
               </button>
               <button className="btn-secondary" onClick={startSpread}>
                 {t("home.spread")}
+              </button>
+              <button className="btn-secondary" onClick={openCrystalCollect}>
+                {t("home.collectCrystals")}
               </button>
               <button className="btn-secondary" onClick={openMysticChat}>
                 {t("home.chat")}
@@ -983,16 +1133,66 @@ Keywords: ${top.keywords.join(", ")}
             <h2>{t("result.title")}</h2>
 
             <TarotCard card={currentCard} faceUp={faceUp} mode="result" />
+            <div className="crystal-box">
+              <div className="crystal-label">{t("result.crystalLabel")}</div>
+              <div className="crystal-body">
+                <span className="crystal-emoji">{guardianCrystalDisplay?.emoji || "💎"}</span>
+                <div>
+                  <div className="crystal-name">
+                    {guardianCrystalDisplay?.name ||
+                      currentCrystal?.name ||
+                      "Crystal"}
+                    {guardianCrystalDisplay?.alias
+                      ? ` · ${guardianCrystalDisplay.alias}`
+                      : ""}
+                  </div>
+                  <div className="crystal-note">
+                    {guardianCrystalDisplay?.guardianNote ||
+                      guardianCrystalDisplay?.note ||
+                      guardianCrystalDisplay?.nightly ||
+                      currentCrystal?.note ||
+                      t("result.crystalNoteFallback")}
+                  </div>
+                  {guardianCrystalDisplay?.energy && (
+                    <div className="crystal-energy">
+                      {t("result.crystalEnergy")} {guardianCrystalDisplay.energy}
+                    </div>
+                  )}
+                  {guardianCrystalDisplay?.use && (
+                    <div className="crystal-use">
+                      {guardianCrystalDisplay.use}
+                    </div>
+                  )}
+                  {guardianCrystalDisplay?.nightly && (
+                    <div className="crystal-nightly">
+                      {guardianCrystalDisplay.nightly}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
             <p className="tag" style={{ marginTop: 8 }}>{currentCard.name}</p>
             {resonance && (
               <div className="resonance-box">
-                <div className="resonance-title">🫧 情绪默契系数</div>
+                <div className="resonance-title">{t("resonance.title")}</div>
                 <div className="resonance-line">{resonance.line}</div>
                 <div className="resonance-note">{resonance.note}</div>
               </div>
             )}
             <p className="reading">{reading}</p>
+            {dailyCrystal && (
+              <div className="daily-crystal">
+                <div className="daily-crystal-title">
+                  {t("result.dailyCrystalTitle")} · {dailyCrystal.name}
+                  {dailyCrystal.alias ? ` · ${dailyCrystal.alias}` : ""}
+                </div>
+                <p className="daily-crystal-reason">{dailyCrystal.reason}</p>
+                <p className="daily-crystal-focus">
+                  {dailyCrystal.focus}
+                </p>
+              </div>
+            )}
 
             <div className="affirmation-block">
               <div className="affirmation-visual" aria-hidden="true">
@@ -1007,11 +1207,11 @@ Keywords: ${top.keywords.join(", ")}
               </div>
 
               <div className="affirmation-copy">
-                <div className="affirmation-label">夜间肯定句</div>
+                <div className="affirmation-label">{t("affirmation.label")}</div>
                 <div className="affirmation-text">
                   {affirmationLoading
-                    ? "月光正在写下你的句子…"
-                    : affirmation || "抽卡后自动生成一句柔软的夜间肯定句"}
+                    ? t("affirmation.loading")
+                    : affirmation || t("affirmation.default")}
                 </div>
                 <div className="affirmation-actions">
                   <button
@@ -1019,26 +1219,26 @@ Keywords: ${top.keywords.join(", ")}
                     onClick={() => saveCurrentAffirmation()}
                     disabled={!affirmation || affirmationLoading}
                   >
-                    {savedAff ? "已保存" : "保存"}
+                    {savedAff ? t("affirmation.saved") : t("affirmation.save")}
                   </button>
                   <button
                     className={`chip-btn ${savedAff?.favorite ? "active" : ""}`}
                     onClick={() => saveCurrentAffirmation({ toggleFavorite: true })}
                     disabled={!affirmation || affirmationLoading}
                   >
-                    {savedAff?.favorite ? "已收藏 ♥" : "收藏 ♥"}
+                    {savedAff?.favorite ? t("affirmation.favoriteActive") : t("affirmation.favorite")}
                   </button>
                   <button
                     className={`chip-btn ${savedAff?.cover ? "active" : ""}`}
                     onClick={() => saveCurrentAffirmation({ markCover: true })}
                     disabled={!affirmation || affirmationLoading}
                   >
-                    {savedAff?.cover ? "已设为封面" : "设为封面图"}
+                    {savedAff?.cover ? t("affirmation.coverActive") : t("affirmation.cover")}
                   </button>
                 </div>
                 {coverAffirmation && (
                   <div className="affirmation-hint">
-                    封面句：{coverAffirmation.text}
+                    {t("affirmation.coverHint", { line: coverAffirmation.text })}
                   </div>
                 )}
               </div>
@@ -1071,29 +1271,56 @@ Keywords: ${top.keywords.join(", ")}
             <h2>{t("spread.title")}</h2>
             <p className="tag">{t("spread.subtitle")}</p>
 
-            <div className="spread-grid">
-              {SPREAD_POSITIONS.map((pos, idx) => {
-                const card = spreadCards[idx];
-                return (
-                  <div className="spread-slot" key={pos}>
-                    <div className="spread-label">{spreadLabels[pos]}</div>
-                    <TarotCard
-                      card={card}
-                      faceUp={spreadFlips[idx]}
-                      mode="spread"
-                      onTap={() => flipSpreadCard(idx)}
-                    />
-                    <div className="spread-reading">
-                      {spreadFlips[idx]
-                        ? spreadReading[pos] ||
-                          (spreadLoading
-                            ? t("spread.loading")
-                            : t("spread.empty"))
-                        : t("spread.tap")}
+            <div className="spread-body">
+              <div className="spread-grid">
+                {SPREAD_POSITIONS.map((pos, idx) => {
+                  const card = spreadCards[idx];
+                  return (
+                    <div className="spread-slot" key={pos}>
+                      <div className="spread-label">{spreadLabels[pos]}</div>
+                      <TarotCard
+                        card={card}
+                        faceUp={spreadFlips[idx]}
+                        mode="spread"
+                        onTap={() => flipSpreadCard(idx)}
+                      />
+                      <div className="spread-reading">
+                        {spreadFlips[idx]
+                          ? spreadReading[pos] ||
+                            (spreadLoading
+                              ? t("spread.loading")
+                              : t("spread.empty"))
+                          : t("spread.tap")}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+              <aside className="spread-crystal-sidebar">
+                <div className="spread-crystal-header">
+                  {t("spread.collectTitle")}
+                </div>
+                {SPREAD_POSITIONS.map((pos, idx) => {
+                  const crystal = spreadCrystals[pos] || {};
+                  const label = spreadLabels[pos];
+                  const card = spreadCards[idx];
+                  return (
+                    <div className="spread-crystal-item" key={pos}>
+                      <div className="spread-crystal-position">{label}</div>
+                      <div className="spread-crystal-name-row">
+                        <span className="spread-crystal-emoji">
+                          {crystal.emoji || "💎"}
+                        </span>
+                        <div className="spread-crystal-name">{crystal.name}</div>
+                      </div>
+                      <div className="spread-crystal-note">{crystal.note}</div>
+                      <div className="spread-crystal-card">
+                        {card?.name || ""}
+                      </div>
+                    </div>
+                  );
+                })}
+              </aside>
             </div>
 
             <div className="action-row">
@@ -1108,7 +1335,7 @@ Keywords: ${top.keywords.join(", ")}
         )}
 
         {stage === "chat" && (
-          <MysticChat onBack={() => setStage("home")} />
+          <MysticChat onBack={() => setStage("home")} t={t} />
         )}
 
         {stage === "dream" && (
@@ -1117,6 +1344,10 @@ Keywords: ${top.keywords.join(", ")}
             t={t}
             lang={lang}
             secretSeed={activeSecret}
+            moon={moon}
+            crystals={collectedCrystals}
+            dailyCrystal={dailyCrystal}
+            onGrantCrystal={grantCrystal}
           />
         )}
 
@@ -1132,8 +1363,8 @@ Keywords: ${top.keywords.join(", ")}
             <div className="share-glow" />
 
             <div className="share-header">
-              <div className="share-brand">NightWhisper Tarot</div>
-              <div className="share-sub">Dream Pixel Oracle</div>
+              <div className="share-brand">{t("share.brand")}</div>
+              <div className="share-sub">{t("share.sub")}</div>
             </div>
 
             <div className="share-body">
@@ -1145,33 +1376,39 @@ Keywords: ${top.keywords.join(", ")}
               {shareAffirmation && (
                 <div className="share-affirmation">
                   <div className="share-moon" />
-                  <div className="share-affirm-label">Night Affirmation</div>
+                  <div className="share-affirm-label">{t("share.affirmLabel")}</div>
                   <div className="share-affirm-text">{shareAffirmation}</div>
                 </div>
               )}
 
               <div className="share-block">
-                <div className="share-block-title">AI 夜间箴言</div>
+                <div className="share-block-title">{t("share.blockTitle")}</div>
                 <div className="share-lines">
-                  {["Symbolism", "Gentle Reminder", "Small Action"].map(
-                    (label, idx) => (
-                      <div className="share-line" key={label}>
-                        <span className="share-label">{label}</span>
-                        <span className="share-text">
-                          {readingLines[idx] || ""}
-                        </span>
-                      </div>
-                    )
-                  )}
+                  {["symbolism", "reminder", "action"].map((key, idx) => (
+                    <div className="share-line" key={key}>
+                      <span className="share-label">{t(`share.labels.${key}`)}</span>
+                      <span className="share-text">
+                        {readingLines[idx] || ""}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="share-crystal">
+                <div className="share-crystal-label">{t("result.crystalLabel")}</div>
+                <div className="share-crystal-body">
+                  <span className="share-crystal-emoji">{currentCrystal.emoji}</span>
+                  <div>
+                    <div className="share-crystal-name">{currentCrystal.name}</div>
+                    <div className="share-crystal-note">{currentCrystal.note}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="share-footer">
-              <div className="share-footer-line">NightWhisper Tarot</div>
-              <div className="share-footer-sub">
-                Hug the night. Listen softer.
-              </div>
+              <div className="share-footer-line">{t("share.footerLine")}</div>
+              <div className="share-footer-sub">{t("share.footerSub")}</div>
             </div>
           </div>
         </div>

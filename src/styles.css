@@ -229,6 +229,108 @@ body {
   }
 }
 
+/* Dream title enhancements */
+.dream-title {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  padding: 0 4px;
+}
+
+.dream-title .moon-icon,
+.dream-title .title-text {
+  position: relative;
+  z-index: 2;
+}
+
+.dream-title .title-text {
+  animation: dreamTitleFlicker 3.8s ease-in-out infinite;
+}
+
+.dream-title .moon-icon {
+  font-size: 1.3em;
+  animation: moonSwing 4.5s ease-in-out infinite;
+}
+
+.dream-title .title-glimmer {
+  position: absolute;
+  top: -20%;
+  left: -60%;
+  width: 60%;
+  height: 160%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.78) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-12deg);
+  filter: blur(0.4px);
+  opacity: 0;
+  pointer-events: none;
+  animation: titleGlint 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes dreamTitleFlicker {
+  0% {
+    opacity: 0.92;
+  }
+  45% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes moonSwing {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(2px) rotate(6deg);
+  }
+  50% {
+    transform: translateX(-3px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(1px) rotate(4deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes titleGlint {
+  0% {
+    left: -60%;
+    opacity: 0;
+  }
+  15% {
+    left: -30%;
+    opacity: 0.9;
+  }
+  40% {
+    left: 110%;
+    opacity: 0;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
 /* ------------------------------
    Typography
 ------------------------------ */
@@ -251,24 +353,91 @@ h2 {
 ------------------------------ */
 .btn-main,
 .btn-secondary {
+  position: relative;
   width: 100%;
   padding: 12px 14px;
   font-size: 13px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
+  overflow: hidden;
+  isolation: isolate;
+  letter-spacing: 0.04em;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    filter 0.22s ease;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.btn-main::after,
+.btn-secondary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.24) 50%, rgba(255, 255, 255, 0) 65%);
+  transform: translateX(-120%);
+  animation: btnSheen 6s linear infinite;
+  opacity: 0.4;
+  mix-blend-mode: screen;
 }
 
 .btn-main {
-  background: #f3d7ff;
-  color: #201026;
+  background: linear-gradient(135deg, #f7d9ff 0%, #d8a5ff 48%, #7c56ff 100%);
+  background-size: 220% 220%;
+  color: #1b0d34;
+  border-color: rgba(255, 225, 255, 0.75);
+  animation: btnShimmer 9s ease-in-out infinite;
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.35),
+    0 12px 32px rgba(120, 82, 255, 0.45),
+    0 0 28px rgba(255, 200, 255, 0.4);
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.45);
+}
+
+.btn-main:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 22px rgba(255, 255, 255, 0.4),
+    0 14px 34px rgba(130, 92, 255, 0.52),
+    0 0 36px rgba(255, 210, 255, 0.32);
 }
 
 .btn-secondary {
   margin-top: 10px;
-  background: transparent;
-  border: 1px solid rgba(200, 180, 255, 0.8);
+  background: linear-gradient(145deg, rgba(200, 180, 255, 0.2), rgba(130, 80, 200, 0.25));
+  border-color: rgba(190, 170, 255, 0.8);
   color: #f8f4ff;
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.12),
+    0 10px 26px rgba(0, 0, 0, 0.35),
+    0 0 22px rgba(150, 210, 255, 0.32);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(210, 190, 255, 0.95);
+  box-shadow:
+    inset 0 0 22px rgba(255, 255, 255, 0.2),
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    0 0 26px rgba(176, 226, 255, 0.4);
+}
+
+.btn-main:active,
+.btn-secondary:active {
+  transform: translateY(0);
+  filter: brightness(1.05);
+}
+
+.btn-main:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.15);
 }
 
 .btn-stack {
@@ -276,6 +445,31 @@ h2 {
   flex-direction: column;
   gap: 10px;
 }
+
+@keyframes btnShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes btnSheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  45% {
+    transform: translateX(180%);
+  }
+  100% {
+    transform: translateX(180%);
+  }
+}
+
 
 /* ------------------------------
    Tarot Card Flip
@@ -346,6 +540,78 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.crystal-card {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(12, 10, 32, 0.9);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease;
+}
+
+.crystal-card:hover {
+  transform: translateY(-1px);
+}
+
+.crystal-emoji {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+
+.crystal-copy {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+}
+
+.crystal-intro {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.crystal-phase {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  align-items: center;
+}
+
+.crystal-phase-label {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.crystal-phase-value {
+  font-weight: 600;
+}
+
+.crystal-name {
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #fefefe;
+}
+
+.crystal-note {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
 }
 
 /* ------------------------------
@@ -943,11 +1209,89 @@ h2 {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
+.crystal-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 190, 255, 0.45);
+  background: rgba(10, 6, 30, 0.9);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
+}
+
+.crystal-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(220, 220, 255, 0.9);
+}
+
+.crystal-body {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.crystal-emoji {
+  font-size: 22px;
+}
+
+.crystal-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.crystal-note {
+  font-size: 13px;
+  color: rgba(205, 225, 255, 0.8);
+}
+
 .share-block-title {
   font-size: 18px;
   letter-spacing: 0.08em;
   margin-bottom: 10px;
   color: #f9e8ff;
+}
+
+.share-crystal {
+  margin-top: 14px;
+  width: 100%;
+  max-width: 720px;
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(185, 170, 255, 0.65);
+  background: rgba(6, 4, 22, 0.82);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5);
+}
+
+.share-crystal-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(210, 225, 255, 0.9);
+}
+
+.share-crystal-body {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.share-crystal-emoji {
+  font-size: 20px;
+}
+
+.share-crystal-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.share-crystal-note {
+  font-size: 13px;
+  color: rgba(215, 225, 255, 0.8);
 }
 
 .share-lines {
@@ -1233,7 +1577,7 @@ h2 {
    Three-card spread
 ------------------------------ */
 .spread-panel {
-  max-width: 640px;
+  max-width: 920px;
 }
 
 .spread-grid {
@@ -1241,6 +1585,8 @@ h2 {
   gap: 14px;
   justify-content: space-between;
   flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .spread-slot {
@@ -1270,6 +1616,77 @@ h2 {
   padding: 10px 12px;
   min-height: 48px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.spread-body {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-top: 12px;
+}
+
+.spread-crystal-sidebar {
+  background: rgba(10, 6, 30, 0.85);
+  border: 1px solid rgba(190, 210, 255, 0.55);
+  border-radius: 18px;
+  padding: 16px;
+  width: 230px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.spread-crystal-header {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(220, 220, 255, 0.9);
+  margin-bottom: 12px;
+}
+
+.spread-crystal-item + .spread-crystal-item {
+  margin-top: 14px;
+}
+
+.spread-crystal-position {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(200, 200, 255, 0.65);
+  margin-bottom: 4px;
+}
+
+.spread-crystal-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f6fbff;
+  margin-bottom: 6px;
+}
+
+.spread-crystal-emoji {
+  font-size: 20px;
+}
+
+.spread-crystal-note {
+  font-size: 12px;
+  color: rgba(220, 230, 255, 0.85);
+  margin-bottom: 4px;
+}
+
+.spread-crystal-card {
+  font-size: 12px;
+  color: rgba(180, 190, 255, 0.8);
+}
+
+@media (max-width: 960px) {
+  .spread-body {
+    flex-direction: column;
+  }
+  .spread-crystal-sidebar {
+    width: 100%;
+  }
 }
 
 @media (max-width: 720px) {

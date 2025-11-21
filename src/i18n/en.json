@@ -19,6 +19,7 @@
     "chat": "AI Mystic Chat (tarot ritual)",
     "dreamBottle": "Dream Bottle",
     "encyclopedia": "Tarot Encyclopedia",
+    "collectCrystals": "Collect crystals",
     "coffee": "Love the night draw? Buy me a coffee to keep creating ✨"
   },
   "draw": {
@@ -26,7 +27,11 @@
     "subtitle": "Hold the card — slide upward gently."
   },
   "result": {
-    "title": "Your card tonight"
+    "title": "Your card tonight",
+    "crystalLabel": "Crystal guardian · 水晶守护者",
+    "crystalNoteFallback": "Quiet night energy keeps your heart soft.",
+    "crystalEnergy": "Energy",
+    "dailyCrystalTitle": "Tonight's crystal"
   },
   "share": {
     "button": "Save PNG for sharing",
@@ -34,7 +39,18 @@
     "hintReady": "Generate a PNG for IG / Xiaohongshu / WeChat",
     "hintBusy": "Dream pixels rendering…",
     "hintDone": "PNG ready — share anywhere",
-    "hintFail": "Rendering failed, try once more"
+    "hintFail": "Rendering failed, try once more",
+    "brand": "NightWhisper Tarot",
+    "sub": "Dream Pixel Oracle",
+    "affirmLabel": "Night Affirmation",
+    "blockTitle": "AI Nightlines",
+    "labels": {
+      "symbolism": "Symbolism",
+      "reminder": "Gentle Reminder",
+      "action": "Small Action"
+    },
+    "footerLine": "NightWhisper Tarot",
+    "footerSub": "Hug the night. Listen softer."
   },
   "spread": {
     "title": "Three-card Night Spread",
@@ -45,7 +61,8 @@
     "loading": "Calling night whispers...",
     "empty": "A gentle hint arises.",
     "tap": "Tap to reveal",
-    "new": "New three-card spread"
+    "new": "New three-card spread",
+    "collectTitle": "Collect crystals"
   },
   "dream": {
     "title": "Dream Bottle",
@@ -56,6 +73,41 @@
     "saved": "Auto-saved to your bottle",
     "empty": "No wishes yet — the bottle is listening.",
     "today": "today",
+    "crystalIntro": "The moon picked a crystal for you today.",
+    "crystalPhaseLabel": "Moon phase",
+    "crystalPhaseFallback": "Lunar whisper",
+    "crystal": {
+      "obsidian": {
+        "name": "Obsidian",
+        "note": "Grounding protection to root the seedlings you just planted."
+      },
+      "citrine": {
+        "name": "Citrine",
+        "note": "Golden courage to keep the first-quarter momentum steady."
+      },
+      "moonstone": {
+        "name": "Moonstone",
+        "note": "Luminous intuition that mirrors your full-moon dreams tonight."
+      },
+      "labradorite": {
+        "name": "Labradorite",
+        "note": "Aurora shimmer to guard endings and ready the next cycle."
+      }
+    },
+    "crystalGardenTitle": "Crystal Garden · 水晶花园",
+    "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
+    "dailyCrystalLabel": "Tonight's crystal · 今夜水晶",
+    "crystalEnergyLevel": "Energy",
+    "crystalEmpty": "No crystals yet — draw one to awaken the garden.",
+    "crystalCollected": "Collected on",
+    "crystalSelectHint": "Click a crystal to read its night energy + daily use.",
+    "crystalTasks": "Tasks",
+    "taskLoginLabel": "Daily login glow",
+    "taskLoginDesc": "Sign in to receive Moonstone softness.",
+    "taskWishLabel": "Wish note",
+    "taskWishDesc": "Write a bottle wish to invite Rose Quartz warmth.",
+    "taskRitualLabel": "Mini ritual spark",
+    "taskRitualDesc": "Light a tiny ritual to earn Citrine brightness.",
     "coffee": "Enjoy the Dream Bottle? Buy me a coffee ✨"
   },
   "ency": {
@@ -66,5 +118,72 @@
     "upright": "Upright",
     "reversed": "Reversed",
     "footer": "Pixel compendium vibe — soft glow, crisp edges, night-sky gradients."
+  },
+  "resonance": {
+    "title": "🫧 Resonance",
+    "noteMatched": "Weather and the card tune in together, gently amplifying your feeling.",
+    "noteContrasting": "The weather works like a side light, making the resonance feel layered."
+  },
+  "affirmation": {
+    "label": "Night affirmation",
+    "loading": "Moonlight is writing your sentence…",
+    "default": "Draw a card to receive a soft night affirmation",
+    "save": "Save",
+    "saved": "Saved",
+    "favorite": "Favorite ♥",
+    "favoriteActive": "Favorited ♥",
+    "cover": "Set as cover",
+    "coverActive": "Cover set",
+    "coverHint": "Cover line: {line}"
+  },
+  "secretChip": {
+    "title": "Secret Seed"
+  },
+  "moon": {
+    "pill": "Moon Cycle Engine",
+    "phaseLabel": "Moon phase",
+    "description": "Let each draw follow the moon. Mood: {mood}. Action energy {actionScore}/100. Tone: {tone}.",
+    "illumination": "{pct}% lit",
+    "age": "Day {day} / {cycle}",
+    "metric": {
+      "action": "Action energy",
+      "tone": "Mood tilt",
+      "tip": "Hint"
+    },
+    "progressLabel": "Moon progress {progress}%",
+    "progressMeta": "Full moon in {toFull} days · New moon in {toNew} days",
+    "rituals": {
+      "full": {
+        "title": "Full Moon Blessing",
+        "desc": "Full moon brings high action energy and honest glow. Write a blessing for yourself or a friend.",
+        "buttonActive": "Claim blessing",
+        "buttonLocked": "Unlock at full moon",
+        "footerActive": "Light pours down ✦",
+        "footerLocked": "Full moon in {toFull} days"
+      },
+      "new": {
+        "title": "New Moon Wishes",
+        "desc": "New moon seeds dreams. Drop a wish into the Dream Bottle and wait for the glow.",
+        "buttonActive": "Write into Dream Bottle",
+        "buttonLocked": "Unlock at new moon",
+        "footerActive": "The bottle is open",
+        "footerLocked": "New moon in {toNew} days"
+      }
+    },
+    "toneHint": "Draw tone will follow: {toneTag}"
+  },
+  "mystic": {
+    "title": "Mystic Chat · Night Oracle",
+    "tagline": "Ask a question → draw 1–3 cards → receive night words + stardust suggestions · maybe a starfall.",
+    "back": "Back to main",
+    "intro": "Share a question. I will draw 1–3 cards, offer night words, stardust advice, and maybe a starfall.",
+    "placeholder": "Ask a thought that lives in your night… (Ctrl/Cmd + Enter to send)",
+    "button": {
+      "send": "Send reading",
+      "sending": "Reading cards…"
+    },
+    "hint": "Each reply redraws the spread; the background breathes with the cards.",
+    "stardustLabel": "Stardust advice",
+    "loading": "Night is laying out the spread, stardust is falling…"
   }
 }
