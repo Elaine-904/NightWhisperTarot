@@ -8,6 +8,24 @@
   "draw.subtitle": "Pense doucement à ce qui occupe ton cœur…",
 
   "result.title": "La carte de ta nuit",
+  "result.crystalLabel": "Crystal guardian",
+  "result.crystalNoteFallback": "L’énergie douce de la nuit veille sur ton cœur.",
+  "result.crystalEnergy": "Énergie",
+  "result.dailyCrystalTitle": "Tonight's crystal",
   "btn.more": "En tirer une autre",
-  "btn.back": "Retour à l’accueil"
+  "btn.back": "Retour à l’accueil",
+  "dream.crystalGardenTitle": "Crystal Garden",
+  "dream.crystalGardenHint": "Collecte des cristaux via les tirages, les rituels ou la connexion.",
+  "dream.dailyCrystalLabel": "Tonight's crystal",
+  "dream.crystalEnergyLevel": "Energy",
+  "dream.crystalEmpty": "Pas encore de cristaux — tire une carte pour éveiller le jardin.",
+  "dream.crystalCollected": "Collected on",
+  "dream.crystalSelectHint": "Cliquez sur un cristal pour lire son énergie nocturne + son utilité du jour.",
+  "dream.crystalTasks": "Tasks",
+  "dream.taskLoginLabel": "Daily login glow",
+  "dream.taskLoginDesc": "Sign in to receive Moonstone softness.",
+  "dream.taskWishLabel": "Wish note",
+  "dream.taskWishDesc": "Write a bottle wish to invite Rose Quartz warmth.",
+  "dream.taskRitualLabel": "Mini ritual spark",
+  "dream.taskRitualDesc": "Light a tiny ritual to earn Citrine brightness."
 }

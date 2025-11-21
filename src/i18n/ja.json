@@ -19,6 +19,7 @@
     "chat": "AI ミスティックチャット",
     "dreamBottle": "ドリームボトル",
     "encyclopedia": "タロット百科",
+    "collectCrystals": "クリスタルを集める",
     "coffee": "夜の引きが好きですか？コーヒーで支援してください ✨"
   },
   "draw": {
@@ -60,7 +61,8 @@
     "loading": "夜の囁きを呼び込んでいます…",
     "empty": "優しいヒントが浮かび上がります。",
     "tap": "タップしてめくる",
-    "new": "新しい三枚スプレッド"
+    "new": "新しい三枚スプレッド",
+    "collectTitle": "クリスタルを集める"
   },
   "dream": {
     "title": "ドリームボトル",
@@ -71,6 +73,27 @@
     "saved": "自動でボトルに保存しました",
     "empty": "まだ願いはないようです — 瓶が耳を澄ませています。",
     "today": "今日",
+    "crystalIntro": "今夜、月があなたにクリスタルを選んでくれました。",
+    "crystalPhaseLabel": "月の位相",
+    "crystalPhaseFallback": "月のささやき",
+    "crystal": {
+      "obsidian": {
+        "name": "黒曜石",
+        "note": "植えたばかりの芽を地に下ろし、安定した守りを届ける。"
+      },
+      "citrine": {
+        "name": "シトリン",
+        "note": "上弦の流れを黄金の勇気で守り、次の一歩を照らす。"
+      },
+      "moonstone": {
+        "name": "ムーンストーン",
+        "note": "今夜の満月の夢を映す柔らかな直感の光。"
+      },
+      "labradorite": {
+        "name": "ラブラドライト",
+        "note": "終わりを守り、次の周期を整えるオーロラの輝き。"
+      }
+    },
     "crystalGardenTitle": "クリスタルガーデン",
     "crystalGardenHint": "カード、タスク、ログインでクリスタルを集めましょう。",
     "dailyCrystalLabel": "今夜のクリスタル",

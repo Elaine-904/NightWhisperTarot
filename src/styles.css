@@ -183,6 +183,7 @@ body {
 ------------------------------ */
 .nw-main {
   padding: 16px;
+  padding-bottom: 120px;
 
   /* ★ 永远水平 + 垂直居中 */
   display: flex;
@@ -214,6 +215,36 @@ body {
 
   /* ✨ 轻柔上下浮动动画 */
   animation: floatUpDown 4.5s ease-in-out infinite;
+}
+
+.panel.panel-static {
+  animation: none;
+  background: rgba(8, 6, 26, 0.82);
+  border-color: rgba(170, 150, 230, 0.45);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.42);
+}
+
+.home-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  text-align: center;
+}
+
+.home-cta {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-cta .btn-main {
+  min-height: 58px;
+}
+
+.moon-panel {
+  max-width: 520px;
 }
 
 /* 上下轻微漂浮（梦境感） */
@@ -540,6 +571,105 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ------------------------------
+   Night Sky Navigation
+------------------------------ */
+.night-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+  max-width: min(100%, 960px);
+  background: linear-gradient(135deg, rgba(10, 8, 32, 0.92), rgba(30, 18, 60, 0.95));
+  border-radius: 999px;
+  border: 1px solid rgba(190, 215, 255, 0.6);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.6),
+    0 0 36px rgba(134, 171, 255, 0.35);
+  backdrop-filter: blur(14px);
+  z-index: 60;
+}
+
+.night-nav-button {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(18, 12, 42, 0.9));
+  color: #f4eeff;
+  font-family: "Courier New", "Press Start 2P", monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  min-width: 92px;
+  flex: 1 1 96px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(136, 178, 255, 0.4);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.night-nav-button:hover,
+.night-nav-button:focus-visible {
+  border-color: rgba(200, 220, 255, 0.9);
+  box-shadow:
+    inset 0 0 16px rgba(255, 255, 255, 0.12),
+    0 0 18px rgba(172, 209, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+.night-nav-button:focus-visible {
+  outline: 2px solid rgba(173, 215, 255, 0.9);
+  outline-offset: 2px;
+}
+
+.night-nav-button.active {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.25),
+    0 0 24px rgba(198, 175, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.night-nav-icon {
+  font-size: 20px;
+  text-shadow: 0 0 8px rgba(210, 198, 255, 0.9);
+  filter: drop-shadow(0 0 10px rgba(195, 222, 255, 0.75));
+}
+
+.night-nav-label {
+  font-size: 9px;
+  letter-spacing: 0.35em;
+}
+
+@media (max-width: 640px) {
+  .night-nav {
+    width: calc(100% - 32px);
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 12px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .night-nav-button {
+    flex: 1;
+    padding: 6px 8px;
+  }
 }
 
 .crystal-card {
@@ -1367,6 +1497,58 @@ h2 {
   background: rgba(12, 10, 40, 0.9);
   border: 1px solid rgba(160, 140, 255, 0.6);
   white-space: pre-line;
+}
+
+.daily-crystal {
+  margin-top: 14px;
+  border-radius: 12px;
+  padding: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(80, 56, 128, 0.75)
+  );
+  border: 1px solid rgba(200, 180, 255, 0.55);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+.daily-crystal-title {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.daily-crystal-reason {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.daily-crystal-focus {
+  font-size: 12px;
+  color: #e8dfff;
+  opacity: 0.85;
+}
+
+.crystal-energy,
+.share-crystal-energy {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.crystal-use,
+.share-crystal-use,
+.crystal-nightly,
+.share-crystal-nightly {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .resonance-box {
@@ -2789,6 +2971,238 @@ h2 {
   100% {
     opacity: 0.35;
     transform: translateY(0);
+  }
+}
+
+.dream-garden-wrapper {
+  margin-top: 20px;
+}
+
+.crystal-garden {
+  background: rgba(7, 6, 22, 0.9);
+  border: 1px solid rgba(185, 170, 255, 0.6);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.45);
+}
+
+.garden-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.garden-title {
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.garden-sub {
+  font-size: 12px;
+  color: rgba(220, 220, 255, 0.7);
+  max-width: 320px;
+}
+
+.garden-daily-card {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(210, 210, 255, 0.4);
+  padding: 10px 14px;
+  min-width: 220px;
+}
+
+.garden-daily-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 4px;
+}
+
+.garden-daily-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.garden-daily-reason {
+  font-size: 12px;
+  color: rgba(230, 230, 255, 0.75);
+  margin-top: 6px;
+}
+
+.garden-daily-focus {
+  font-size: 12px;
+  color: #e8dfff;
+  margin-top: 4px;
+}
+
+.garden-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.garden-empty {
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(200, 200, 255, 0.4);
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.crystal-tile {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  color: #fff;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.crystal-tile.active {
+  border-color: rgba(170, 210, 255, 0.9);
+  box-shadow: 0 10px 28px rgba(110, 150, 255, 0.4);
+}
+
+.tile-sparkle {
+  position: absolute;
+  inset: 6px;
+  border-radius: 10px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 60%);
+  opacity: 0.45;
+  animation: crystalPulse 4s ease-in-out infinite;
+}
+
+.tile-name {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.tile-energy {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.crystal-detail {
+  border-radius: 14px;
+  border: 1px solid rgba(170, 150, 255, 0.5);
+  padding: 12px;
+  background: rgba(10, 8, 30, 0.85);
+  min-height: 120px;
+}
+
+.detail-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.detail-guardian {
+  font-size: 12px;
+  color: rgba(210, 220, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.detail-use,
+.detail-nightly {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 4px;
+}
+
+.detail-meta {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.detail-empty {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 16px 0;
+}
+
+.garden-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.garden-task-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(210, 225, 255, 0.7);
+}
+
+.garden-task-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.task-chip {
+  flex: 1;
+  min-width: 140px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(200, 180, 255, 0.4);
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: left;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.task-chip:hover {
+  border-color: rgba(255, 220, 170, 0.9);
+  transform: translateY(-1px);
+}
+
+.task-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.task-desc {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+@keyframes crystalPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(0.96);
+    opacity: 0.45;
   }
 }
 

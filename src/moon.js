@@ -1,47 +1,47 @@
 const PHASE_DETAILS = {
   new: {
-    name: "新月 · New Moon",
+    name: "New Moon",
     emoji: "🌑",
-    mood: "静下来、设定意图、让内心慢慢苏醒",
+    mood: "Quiet your mind, set an intention, and let your heart slowly wake up.",
     actionScore: 32,
     tone: "whispered, seed-planting, hopeful but gentle",
-    ritual: "写 1-2 句新月愿望，藏进 Dream Bottle",
+    ritual: "I plant this seed of intention. May it rest safely in this bottle and grow into the reality I dream of.",
     accent: "#9be4ff",
   },
   first: {
-    name: "上弦月 · First Quarter",
+    name: "First Quarter",
     emoji: "🌓",
-    mood: "好奇、开始行动、测试雏形",
+    mood: "Curiosity. Initiation. Experimentation.",
     actionScore: 68,
     tone: "curious, forward-leaning, lightly electric",
-    ritual: "完成一个最小行动，告诉自己“足够了”",
+    ritual: "Take the smallest step and affirm. This is enough",
     accent: "#b6ffb3",
   },
   full: {
-    name: "满月 · Full Moon",
+    name: "Full Moon",
     emoji: "🌕",
-    mood: "释放、庆祝、让光照亮成果与真相",
+    mood: "Release, celebrate, and let the light shine upon the results and the truth.",
     actionScore: 90,
     tone: "luminous, celebratory, honest, heart-open",
-    ritual: "写一段满月祝福，对朋友或自己朗读",
+    ritual: "Write a Full Moon blessing to read to a friend or yourself.",
     accent: "#ffd38f",
   },
   last: {
-    name: "下弦月 · Last Quarter",
+    name: "Last Quarter",
     emoji: "🌗",
-    mood: "减法、收尾、留出空间让能量回笼",
+    mood: "Practice subtraction, wrap things up, and leave space for your energy to return.",
     actionScore: 54,
     tone: "clearing, reflective, softly decisive",
-    ritual: "删掉一个负担，给自己留一点空白",
+    ritual: "Remove one burden and leave yourself a little breathing room.",
     accent: "#b8b0ff",
   },
 };
 
 export const MOON_MARKERS = [
-  { label: "新月", icon: "🌑", position: 0 },
-  { label: "上弦", icon: "🌓", position: 25 },
-  { label: "满月", icon: "🌕", position: 50 },
-  { label: "下弦", icon: "🌗", position: 75 },
+  { label: "New Moon", icon: "🌑", position: 0 },
+  { label: "First Quarter", icon: "🌓", position: 25 },
+  { label: "Full Moon", icon: "🌕", position: 50 },
+  { label: "Last Quarter", icon: "🌗", position: 75 },
 ];
 
 function getPhaseKey(progress) {
@@ -82,6 +82,6 @@ export function getMoonCycle(date = new Date()) {
     daysToFull,
     daysToNew,
     cycleLength: SYNODIC_DAYS,
-    toneTag: `${detail.name} ${detail.emoji}: ${detail.tone}; 行动力 ${detail.actionScore}/100，情绪倾向 ${detail.mood}`,
+    toneTag: `${detail.name} ${detail.emoji}: ${detail.tone}; Actions:  ${detail.actionScore}/100，Mood:  ${detail.mood}`,
   };
 }

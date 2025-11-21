@@ -28,7 +28,7 @@
   },
   "result": {
     "title": "Your card tonight",
-    "crystalLabel": "Crystal guardian · 水晶守护者",
+    "crystalLabel": "Crystal guardian",
     "crystalNoteFallback": "Quiet night energy keeps your heart soft.",
     "crystalEnergy": "Energy",
     "dailyCrystalTitle": "Tonight's crystal"
@@ -94,9 +94,9 @@
         "note": "Aurora shimmer to guard endings and ready the next cycle."
       }
     },
-    "crystalGardenTitle": "Crystal Garden · 水晶花园",
+    "crystalGardenTitle": "Crystal Garden",
     "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
-    "dailyCrystalLabel": "Tonight's crystal · 今夜水晶",
+    "dailyCrystalLabel": "Tonight's crystal",
     "crystalEnergyLevel": "Energy",
     "crystalEmpty": "No crystals yet — draw one to awaken the garden.",
     "crystalCollected": "Collected on",

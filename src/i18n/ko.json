@@ -19,6 +19,7 @@
     "chat": "AI 미스틱 채팅",
     "dreamBottle": "드림 보틀",
     "encyclopedia": "타로 백과",
+    "collectCrystals": "크리스탈 모으기",
     "coffee": "밤의 카드가 마음에 든다면 커피로 창작을 응원해주세요 ✨"
   },
   "draw": {
@@ -26,7 +27,11 @@
     "subtitle": "카드를 잡고 부드럽게 위로 밀어주세요."
   },
   "result": {
-    "title": "오늘 밤 당신의 카드"
+    "title": "오늘 밤 당신의 카드",
+    "crystalLabel": "크리스탈 수호자",
+    "crystalNoteFallback": "고요한 밤의 에너지가 마음을 부드럽게 감싸줍니다.",
+    "crystalEnergy": "에너지",
+    "dailyCrystalTitle": "오늘 밤의 크리스탈"
   },
   "share": {
     "button": "공유용 PNG 저장",
@@ -56,7 +61,8 @@
     "loading": "밤의 속삭임을 기다리는 중…",
     "empty": "부드러운 힌트가 떠오릅니다.",
     "tap": "눌러서 펼치기",
-    "new": "새로운 세 장"
+    "new": "새로운 세 장",
+    "collectTitle": "크리스탈 수집하기"
   },
   "dream": {
     "title": "드림 보틀",
@@ -67,6 +73,41 @@
     "saved": "병에 자동 저장됨",
     "empty": "아직 소원이 없어요 — 병이 듣고 있어요.",
     "today": "오늘",
+    "crystalIntro": "달이 오늘 당신을 위해 크리스탈을 골랐어요.",
+    "crystalPhaseLabel": "달의 위상",
+    "crystalPhaseFallback": "달빛의 속삭임",
+    "crystal": {
+      "obsidian": {
+        "name": "흑요석",
+        "note": "막 심은 새싹이 땅에 굳건히 뿌리내릴 수 있도록 지켜주는 안정의 보호."
+      },
+      "citrine": {
+        "name": "황수정",
+        "note": "상현달의 흐름을 황금빛 용기로 차분히 지켜주는 용기."
+      },
+      "moonstone": {
+        "name": "월광석",
+        "note": "만월의 꿈을 부드럽게 비추는 은은한 직관의 빛."
+      },
+      "labradorite": {
+        "name": "라브라도라이트",
+        "note": "여운을 지키고 다음 주기를 준비하도록 오로라처럼 반짝이는 보호."
+      }
+    },
+    "crystalGardenTitle": "크리스탈 가든",
+    "crystalGardenHint": "카드, 과제, 로그인으로 크리스탈을 수집하세요。",
+    "dailyCrystalLabel": "오늘 밤의 크리스탈",
+    "crystalEnergyLevel": "에너지",
+    "crystalEmpty": "아직 크리스탈이 없어요 — 카드를 뽑아 가든을 깨워보세요。",
+    "crystalCollected": "수집일",
+    "crystalSelectHint": "크리스탈을 눌러 밤의 에너지와 오늘의 효능을 확인해보세요。",
+    "crystalTasks": "과제 빛",
+    "taskLoginLabel": "로그인 광휘",
+    "taskLoginDesc": "로그인해서 문스톤의 부드러운 기운을 받아보세요。",
+    "taskWishLabel": "소원 기록",
+    "taskWishDesc": "소원을 병에 적어 로즈쿼츠의 온기를 초대하세요。",
+    "taskRitualLabel": "작은 의식",
+    "taskRitualDesc": "작은 의식을 통해 시트린의 빛을 모아보세요。",
     "coffee": "이 드림 보틀이 마음에 드나요? 커피로 응원해주세요 ✨"
   },
   "ency": {

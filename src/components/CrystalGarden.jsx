@@ -75,7 +75,6 @@ export default function CrystalGarden({
             </div>
             <div className="garden-daily-name">
               {dailyCrystal.name}
-              {dailyCrystal.alias ? ` · ${dailyCrystal.alias}` : ""}
             </div>
             <div className="garden-daily-reason">{dailyCrystal.reason}</div>
             <div className="garden-daily-focus">{dailyCrystal.focus}</div>
@@ -98,7 +97,6 @@ export default function CrystalGarden({
               <span className="tile-sparkle" aria-hidden="true" />
               <span className="tile-name">
                 {crystal.name}
-                {crystal.alias ? ` · ${crystal.alias}` : ""}
               </span>
               <span className="tile-energy">
                 {t("dream.crystalEnergyLevel")} {crystal.energy}
@@ -113,7 +111,7 @@ export default function CrystalGarden({
           <>
             <div className="detail-name">
               {activeCrystal.alias
-                ? `${activeCrystal.name} · ${activeCrystal.alias}`
+                ? `${activeCrystal.name}`
                 : activeCrystal.name}
             </div>
             <div className="detail-guardian">

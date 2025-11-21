@@ -100,57 +100,57 @@ function paletteFromCards(cards) {
 
 function fallbackNightLine(card, salt = 0) {
   const keywords = card.keywords || [];
-  const k0 = keywords[0] || "夜行的心";
-  const k1 = keywords[1] || "静默的风";
+  const k0 = keywords[0] || "a night-wandering heart";
+  const k1 = keywords[1] || "the silent wind";
   const k2 = keywords[2] || k0;
   const patterns = [
-    `${card.cnName || card.name} 在雾蓝夜里讲述 ${k0}，像给自己一条暗线`,
-    `${card.cnName || card.name} 点亮一点 ${k1}，提醒你轻轻把呼吸放慢`,
-    `${card.cnName || card.name} 的影子落在 ${k2} 上，邀你聆听心底较深的声响`,
-    `${card.cnName || card.name} 透出微光，替 ${k1} 留一寸安静的角落`,
+    `${card.enName || card.name} speaks of ${k0} in the misty blue night, like a hidden thread for yourself.`,
+    `${card.enName || card.name} lights a spark of ${k1}, reminding you to gently slow down your breath.`,
+    `${card.enName || card.name}'s shadow falls upon ${k2}, inviting you to hear the deep echoes within.`,
+    `${card.enName || card.name} glows faintly, saving a quiet corner for ${k1}.`,
   ];
   return patterns[(salt + card.index) % patterns.length];
 }
 
 function fallbackStardust(cards) {
-  if (!cards.length) return "闭上眼，先答应自己今晚只做一件温柔的小事。";
-  const lead = cards[0]?.cnName || cards[0]?.name || "夜牌";
-  return `${lead} 的星尘建议：写一句要紧的话，放进口袋，明早再读一次。`;
+  if (!cards.length) return "Close your eyes, and promise yourself to do just one gentle little thing tonight.";
+  const lead = cards[0]?.enName || cards[0]?.name || "The Night Card";
+  return `Stardust advice from ${lead}: Write down one essential sentence, put it in your pocket, and read it again tomorrow morning.`;
 }
 
 function fallbackStarfall(cards) {
-  const name = cards[0]?.cnName || cards[0]?.name || "夜色";
-  return `星落事件：一缕碎光掠过，${name} 把答案藏在你眨眼的瞬间。`;
+  const name = cards[0]?.enName || cards[0]?.name || "The Night";
+  return `Starfall Event: A shard of light grazes by; ${name} hides the answer in the blink of an eye.`;
 }
 
 function buildPrompt(question, cards) {
   const cardList = cards
-    .map((c) => `${c.name} (${c.cnName || ""}; ${c.keywords.join(", ")})`)
+    .map((c) => `${c.name} (${c.enName || ""}; ${c.keywords.join(", ")})`)
     .join("\n");
 
   return `
-你是「夜语星函」AI，占卜聊天室的神秘向导。
-语言：中文，夜色柔和但直接。
+You are the "Night Whisper" AI, a mysterious guide in the divination chatroom.
+Language: English. Tone: Soft like the night, yet direct.
 
-给定用户问题与抽出的塔罗牌，生成一个 JSON：
+Given the user's question and the drawn Tarot cards, generate a JSON object:
 {
   "cards": [
-    { "name": "牌名", "night_words": "夜语解释，15-26字，意象+提醒" }
+    { "name": "Card Name", "night_words": "Night whisper interpretation, 15-26 words, imagery + reminder" }
   ],
-  "stardust": "星尘建议，16-30字，具体的小行动或心法",
-  "starfall": "如果感觉到流星，则写一行 12-22 字的神秘暗号；否则留空字符串"
+  "stardust": "Stardust advice, 16-30 words, specific small action or mindset",
+  "starfall": "If you feel a shooting star, write a mysterious code of 12-22 words; otherwise, leave as an empty string"
 }
 
-约束：
-- night_words 与 stardust 必须使用提供的牌名，不能编造。
-- 所有行禁止列表或编号；保持口语流动感。
-- 句式多样，不要模板痕迹。
-- 避免重复用词。
+Constraints:
+- "night_words" and "stardust" must use the provided card names and cannot be fabricated.
+- No lists or numbering in any lines; maintain a conversational flow.
+- Varied sentence structures; avoid template-like traces.
+- Avoid repetitive vocabulary.
 
-用户问题：
+User Question:
 ${question}
 
-抽到的牌：
+Cards Drawn:
 ${cardList}
 `;
 }
@@ -352,7 +352,7 @@ export default function MysticChat({ onBack, t }) {
                             <img src={card.image} alt={card.name} />
                           </div>
                           <div className="card-meta">
-                            <div className="card-name">{card.cnName || card.name}</div>
+                            <div className="card-name">{card.enName || card.name}</div>
                             <div className="card-night">{card.nightWords}</div>
                           </div>
                         </div>

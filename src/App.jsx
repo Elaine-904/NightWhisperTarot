@@ -26,22 +26,22 @@ const LANG_STORAGE_KEY = "nightwhisper-lang";
 const AMBIENT_TRACKS = [
   {
     id: "night-wind",
-    label: "夜风风铃",
-    note: "默认夜风",
+    label: "Night Chimes",      // 原文: 夜风风铃
+    note: "Default Breeze",     // 原文: 默认夜风
     url: "/night-wind-chimes.wav",
     volume: 0.45,
   },
   {
     id: "cafe-hum",
-    label: "咖啡厅",
-    note: "柔和钢琴",
+    label: "Cafe",              // 原文: 咖啡厅
+    note: "Soft Piano",         // 原文: 柔和钢琴
     url: "https://cdn.pixabay.com/download/audio/2023/05/01/audio_2e501a2fbf.mp3?filename=lofi-study-112191.mp3",
     volume: 0.35,
   },
   {
     id: "forest-soft",
-    label: "森林",
-    note: "溪水虫鸣",
+    label: "Forest",            // 原文: 森林
+    note: "Stream & Insects",   // 原文: 溪水虫鸣
     url: "https://cdn.pixabay.com/download/audio/2022/10/16/audio_9c8a9b9c96.mp3?filename=forest-lullaby-ambient-121089.mp3",
     volume: 0.5,
   },
@@ -115,7 +115,7 @@ const ARCANA_HALF_CARD = {
   id: "arcana-0-5",
   index: 0.5,
   name: "The Between",
-  cnName: "0.5 迷途",
+  cnName: "0.5 The Between",
   image: `data:image/svg+xml,${encodeURIComponent(ARCANA_HALF_SVG)}`,
   keywords: ["threshold", "moonlit choice", "liminal promise"],
 };
@@ -289,7 +289,7 @@ function readAffirmations() {
 
 function affirmationFallback(card) {
   const key = card?.keywords?.find(Boolean) || "gentle becoming";
-  return `今晚我会温柔地相信 ${key}`;
+  return `Tonight I will gently walking into the journey of ${key}`;
 }
 
 function buildResonance(theme, card, t) {
@@ -402,6 +402,7 @@ export default function App() {
   });
   const [spreadLoading, setSpreadLoading] = useState(false);
   const [spreadCrystals, setSpreadCrystals] = useState(() => buildSpreadCrystalSet([]));
+  const [lastSpreadFocus, setLastSpreadFocus] = useState("spread");
 
   const [bgTheme, setBgTheme] = useState("night");
   const [moon, setMoon] = useState(() => getMoonCycle());
@@ -593,6 +594,10 @@ export default function App() {
     setStage("dream");
   }
 
+  function openMoonCycle() {
+    setStage("moon");
+  }
+
   function openMysticChat() {
     setStage("chat");
   }
@@ -601,7 +606,9 @@ export default function App() {
     setStage("encyclopedia");
   }
 
-  function startSpread() {
+  function startSpread(opts = {}) {
+    const focusHint = typeof opts?.focus === "string" ? opts.focus : "spread";
+    setLastSpreadFocus(focusHint);
     const pool =
       secretSeed?.hit && secretSeed.id === "arcana-half"
         ? [...CARDS, ARCANA_HALF_CARD]
@@ -614,10 +621,6 @@ export default function App() {
     setSpreadLoading(true);
     setStage("three");
     loadSpreadReading(picks);
-  }
-
-  function openCrystalCollect() {
-    startSpread();
   }
 
   async function loadAffirmation(card) {
@@ -986,14 +989,76 @@ Keywords: ${top.keywords.join(", ")}
     : null;
   const shareAffirmation = coverAffirmation?.text || affirmation;
 
+  const navFocus = useMemo(() => {
+    if (stage === "home") return "home";
+    if (stage === "draw" || stage === "result") return "draw";
+    if (stage === "three") return lastSpreadFocus;
+    if (stage === "moon") return "moon";
+    if (stage === "chat") return "chat";
+    if (stage === "encyclopedia") return "encyclopedia";
+    return null;
+  }, [stage, lastSpreadFocus]);
+
+  const nightNavItems = [
+    {
+      id: "home",
+      icon: "✨",
+      label: "Home",
+      action: () => setStage("home"),
+    },
+    {
+      id: "draw",
+      icon: "🔮",
+      label: "Draw",
+      action: startDraw,
+    },
+    {
+      id: "spread",
+      icon: "🌙",
+      label: "Spread",
+      action: () => startSpread({ focus: "spread" }),
+    },
+    {
+      id: "crystal",
+      icon: "💎",
+      label: t("home.collectCrystals"),
+      action: () => startSpread({ focus: "crystal" }),
+    },
+    {
+      id: "moon",
+      icon: "🌕",
+      label: "Moon",
+      action: openMoonCycle,
+    },
+    {
+      id: "chat",
+      icon: "💬",
+      label: t("home.chat"),
+      action: openMysticChat,
+    },
+    {
+      id: "encyclopedia",
+      icon: "📚",
+      label: t("home.encyclopedia"),
+      action: openEncyclopedia,
+    },
+  ];
+
+  const isHomeStage = stage === "home";
+  const showMoonFragmentVisual = isHomeStage && moonFragmentOn;
+  const showStarStoneVisual = isHomeStage && starBoost;
+  const showSecretChip = !isHomeStage && activeSecret;
+  const pixelBoost = isHomeStage && starBoost;
+  const pixelAccent = showMoonFragmentVisual ? "#cfe4ff" : undefined;
+
   return (
     <div
-      className={`nw-root ${moonFragmentOn ? "moon-fragment-on" : ""} ${starBoost ? "star-stone-on" : ""} ${
-        activeSecret?.id === "easter-aurora" ? "aurora-on" : ""
-      }`}
+      className={`nw-root ${showMoonFragmentVisual ? "moon-fragment-on" : ""} ${
+        showStarStoneVisual ? "star-stone-on" : ""
+      } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""}`}
     >
       <Background theme={bgTheme} />
-      <PixelStars theme={bgTheme} boost={starBoost} accent={moonFragmentOn ? "#cfe4ff" : undefined} />
+      <PixelStars theme={bgTheme} boost={pixelBoost} accent={pixelAccent} />
 
       <header className="nw-header">
         <div className="logo">🌙 NightWhisper Tarot</div>
@@ -1031,7 +1096,7 @@ Keywords: ${top.keywords.join(", ")}
         </div>
       </header>
 
-      {activeSecret && (
+      {showSecretChip && (
         <div className="secret-chip">
           <div className="secret-chip-title">
             {t("secretChip.title")} · {activeSecret.label}
@@ -1043,7 +1108,7 @@ Keywords: ${top.keywords.join(", ")}
         </div>
       )}
 
-      {moonFragmentOn && (
+      {showMoonFragmentVisual && (
         <div className="moon-fragments" aria-hidden="true">
           {[...Array(6)].map((_, idx) => (
             <span key={idx} className={`fragment piece-${idx}`} />
@@ -1051,7 +1116,7 @@ Keywords: ${top.keywords.join(", ")}
         </div>
       )}
 
-      {starBoost && (
+      {showStarStoneVisual && (
         <div className="star-stone" aria-hidden="true">
           <div className="stone-core" />
           <div className="stone-ring" />
@@ -1060,53 +1125,25 @@ Keywords: ${top.keywords.join(", ")}
 
       <main className="nw-main">
         {stage === "home" && (
-          <div className="panel">
+          <div className="panel panel-static home-panel">
             <h1>{t("home.title")}</h1>
-            <p className="tag">{t("home.tag")}</p>
-            {prophecyOn && prophecyLine && (
-              <div className="prophecy-line">
-                <span className="prophecy-dot">✶</span>
-                <span className="prophecy-text">{prophecyLine}</span>
-              </div>
-            )}
-
-            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} t={t} />
-
-            <div className="btn-stack">
+            <div className="home-cta">
               <button className="btn-main" onClick={startDraw}>
                 {t("home.single")}
               </button>
-              <button className="btn-secondary" onClick={startSpread}>
+              <button className="btn-main" onClick={startSpread}>
                 {t("home.spread")}
               </button>
-              <button className="btn-secondary" onClick={openCrystalCollect}>
-                {t("home.collectCrystals")}
-              </button>
-              <button className="btn-secondary" onClick={openMysticChat}>
-                {t("home.chat")}
-              </button>
-              <button className="btn-secondary" onClick={openDreamBottle}>
+              <button className="btn-main" onClick={openDreamBottle}>
                 {t("home.dreamBottle")}
               </button>
-              <button className="btn-secondary" onClick={openEncyclopedia}>
-                {t("home.encyclopedia")}
-              </button>
             </div>
+          </div>
+        )}
 
-            <div className="bmc-box">
-              <div className="bmc-text">{t("home.coffee")}</div>
-              <a
-                href="https://www.buymeacoffee.com/dreamyarcanastudio"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Buy me a coffee"
-              >
-                <img
-                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=dreamyarcanastudio&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
-                  alt="Buy me a coffee"
-                />
-              </a>
-            </div>
+        {stage === "moon" && (
+          <div className="panel panel-static moon-panel">
+            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} t={t} />
           </div>
         )}
 
@@ -1142,9 +1179,6 @@ Keywords: ${top.keywords.join(", ")}
                     {guardianCrystalDisplay?.name ||
                       currentCrystal?.name ||
                       "Crystal"}
-                    {guardianCrystalDisplay?.alias
-                      ? ` · ${guardianCrystalDisplay.alias}`
-                      : ""}
                   </div>
                   <div className="crystal-note">
                     {guardianCrystalDisplay?.guardianNote ||
@@ -1185,7 +1219,7 @@ Keywords: ${top.keywords.join(", ")}
               <div className="daily-crystal">
                 <div className="daily-crystal-title">
                   {t("result.dailyCrystalTitle")} · {dailyCrystal.name}
-                  {dailyCrystal.alias ? ` · ${dailyCrystal.alias}` : ""}
+                  {dailyCrystal ? ` · ${dailyCrystal.name}` : ""}
                 </div>
                 <p className="daily-crystal-reason">{dailyCrystal.reason}</p>
                 <p className="daily-crystal-focus">
@@ -1397,10 +1431,36 @@ Keywords: ${top.keywords.join(", ")}
               <div className="share-crystal">
                 <div className="share-crystal-label">{t("result.crystalLabel")}</div>
                 <div className="share-crystal-body">
-                  <span className="share-crystal-emoji">{currentCrystal.emoji}</span>
+                  <span className="share-crystal-emoji">
+                    {guardianCrystalDisplay?.emoji || "💎"}
+                  </span>
                   <div>
-                    <div className="share-crystal-name">{currentCrystal.name}</div>
-                    <div className="share-crystal-note">{currentCrystal.note}</div>
+                    <div className="share-crystal-name">
+                      {guardianCrystalDisplay?.name || currentCrystal?.name}
+                    </div>
+                    <div className="share-crystal-note">
+                      {guardianCrystalDisplay?.guardianNote ||
+                        guardianCrystalDisplay?.note ||
+                        guardianCrystalDisplay?.nightly ||
+                        currentCrystal?.note ||
+                        t("result.crystalNoteFallback")}
+                    </div>
+                    {guardianCrystalDisplay?.energy && (
+                      <div className="share-crystal-energy">
+                        {t("result.crystalEnergy")}{" "}
+                        {guardianCrystalDisplay.energy}
+                      </div>
+                    )}
+                    {guardianCrystalDisplay?.use && (
+                      <div className="share-crystal-use">
+                        {guardianCrystalDisplay.use}
+                      </div>
+                    )}
+                    {guardianCrystalDisplay?.nightly && (
+                      <div className="share-crystal-nightly">
+                        {guardianCrystalDisplay.nightly}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1413,6 +1473,21 @@ Keywords: ${top.keywords.join(", ")}
           </div>
         </div>
       )}
+
+      <nav className="night-nav" aria-label="夜空导航">
+        {nightNavItems.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`night-nav-button${navFocus === item.id ? " active" : ""}`}
+            onClick={item.action}
+            aria-pressed={navFocus === item.id}
+          >
+            <span className="night-nav-icon">{item.icon}</span>
+            <span className="night-nav-label">{item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
