@@ -59,6 +59,9 @@ export default function DreamBottle({
   crystals = [],
   dailyCrystal,
   onGrantCrystal,
+  dailyCrystalLimit = 1,
+  dailyCrystalClaimed = 0,
+  dailyCrystalRemaining = 1,
 }) {
   const dateLocale =
     {
@@ -136,6 +139,15 @@ export default function DreamBottle({
     const seedNum = Number(todayKey.replace(/-/g, "")) || Date.now();
     return lines[seedNum % lines.length];
   }, [secretBottle, todayKey]);
+
+  const collectibleLimitLine = t("dream.collectibleLimit", {
+    claimed: dailyCrystalClaimed,
+    limit: dailyCrystalLimit,
+  });
+  const collectibleLimitHint =
+    dailyCrystalRemaining > 0
+      ? t("dream.collectibleReady")
+      : t("dream.collectibleLocked");
 
   return (
     <section className="full-section dream-section">
@@ -238,28 +250,30 @@ export default function DreamBottle({
           }}
         >
           {crystalMeta.emoji}
-        </div>
-        <div className="crystal-copy">
-          <div className="crystal-intro">{t("dream.crystalIntro")}</div>
-          <div className="crystal-phase">
-            <span className="crystal-phase-label">{t("dream.crystalPhaseLabel")}</span>
-            <span className="crystal-phase-value">
-              {crystalPhaseLabel}
-              {moon?.emoji ? ` ${moon.emoji}` : ""}
-            </span>
-          </div>
-          <div className="crystal-name">{crystalName}</div>
-          <div className="crystal-note">{crystalNote}</div>
-        </div>
       </div>
-
+      <div className="crystal-copy">
+        <div className="crystal-intro">{t("dream.crystalIntro")}</div>
+        <div className="crystal-phase">
+          <span className="crystal-phase-label">{t("dream.crystalPhaseLabel")}</span>
+          <span className="crystal-phase-value">
+            {crystalPhaseLabel}
+            {moon?.emoji ? ` ${moon.emoji}` : ""}
+          </span>
+        </div>
+        <div className="crystal-name">{crystalName}</div>
+        <div className="crystal-note">{crystalNote}</div>
+      </div>
+    </div>
       <div className="collection-summary">
+        <div className="collection-limit">
+          <span className="limit-pill">{collectibleLimitLine}</span>
+          <span className="limit-note">{collectibleLimitHint}</span>
+        </div>
         <p className="tag focus-copy">
           {t("dream.collectibleIntro", { phase: crystalPhaseLabel })}
         </p>
         <p className="tag focus-copy">{t("dream.collectibleHint")}</p>
       </div>
-
       <div className="dream-garden-wrapper">
         <button
           type="button"
@@ -304,6 +318,9 @@ export default function DreamBottle({
             <CrystalGarden
               crystals={crystals}
               dailyCrystal={dailyCrystal}
+              dailyCrystalLimit={dailyCrystalLimit}
+              dailyCrystalClaimed={dailyCrystalClaimed}
+              dailyCrystalRemaining={dailyCrystalRemaining}
               onGrantCrystal={onGrantCrystal}
               t={t}
             />

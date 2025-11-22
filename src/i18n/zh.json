@@ -68,7 +68,9 @@
     "tap": "点击翻开",
     "new": "新的三张牌阵",
     "collectTitle": "收集水晶",
-    "limitHint": "每天有 {limit} 次三张牌阵机会，明天再来即可继续探索。"
+    "limitHint": "每天有 {limit} 次三张牌阵机会，明天再来即可继续探索。",
+    "limitBadge": "每日限额",
+    "limitNote": "夜色在午夜悄悄刷新，明天再回到星空占卜吧。"
   },
   "dream": {
     "title": "梦境瓶",
@@ -106,13 +108,16 @@
     "gardenOverlayClose": "关闭花园",
     "collectibleIntro": "收藏簿是夜色拼贴，{phase} 月亮解锁新格。",
     "collectibleHint": "微小仪式、天气与心情都会让某颗水晶暗暗发亮，轻点即可强化。",
+    "collectibleLimit": "今日水晶 {claimed}/{limit}",
+    "collectibleReady": "新日降临后再收集一颗。",
+    "collectibleLocked": "今日水晶已满，明日再来。",
     "dailyCrystalLabel": "今夜之晶",
     "crystalEnergyLevel": "能量",
     "crystalEmpty": "花园还在黑夜里，先抽一颗水晶让光亮绽开。",
     "crystalCollected": "收集于",
     "crystalSelectHint": "点一颗水晶查看它的夜能量与今日提案。",
     "crystalTasks": "任务光辉",
-    "taskHint": "完成这些小仪式，收下一颗故事水晶。",
+    "taskHint": "完成一个小仪式，唤醒故事水晶。",
     "taskLoginLabel": "每日登录",
     "taskLoginDesc": "登录即可获得月光石柔软能量。",
     "taskWishLabel": "写下愿望",

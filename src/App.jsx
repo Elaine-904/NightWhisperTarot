@@ -32,8 +32,6 @@ const TAROT_STAGES = new Set([
   "encyclopedia",
 ]);
 
-const FOCUS_MODE_STORAGE_KEY = "nightwhisper-focusMode";
-
 const AMBIENT_TRACKS = [
   {
     id: "night-wind",
@@ -85,6 +83,28 @@ function readSpreadCount() {
     console.warn("Failed to read spread usage:", err);
     return 0;
   }
+}
+
+const DAILY_CRYSTAL_LIMIT = 1;
+const DAILY_CRYSTAL_TRACKER_KEY = "nightCrystalDailyTracker";
+
+function readDailyCrystalRecord() {
+  if (typeof window === "undefined") return { date: null, count: 0 };
+  try {
+    const raw = localStorage.getItem(DAILY_CRYSTAL_TRACKER_KEY);
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      const date = typeof parsed.date === "string" ? parsed.date : null;
+      const count = Number(parsed.count);
+      return {
+        date,
+        count: Number.isNaN(count) ? 0 : count,
+      };
+    }
+  } catch (err) {
+    console.warn("Failed to read daily crystal record:", err);
+  }
+  return { date: null, count: 0 };
 }
 
 function getGuardianCrystalId(card) {
@@ -419,14 +439,6 @@ export default function App() {
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [themePanelOpen, setThemePanelOpen] = useState(false);
   const [catChatVisible, setCatChatVisible] = useState(false);
-  const [focusMode, setFocusMode] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return localStorage.getItem(FOCUS_MODE_STORAGE_KEY) === "1";
-    } catch (err) {
-      return false;
-    }
-  });
   const [secretSeed, setSecretSeed] = useState(null);
   const [prophecyLine, setProphecyLine] = useState("");
 
@@ -454,6 +466,17 @@ export default function App() {
     if (typeof window === "undefined") return [];
     return readCrystalGarden();
   });
+  const [dailyCrystalRecord, setDailyCrystalRecord] = useState(() => {
+    if (typeof window === "undefined") return { date: null, count: 0 };
+    return readDailyCrystalRecord();
+  });
+  const todayKey = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const dailyCrystalClaimed =
+    dailyCrystalRecord.date === todayKey ? dailyCrystalRecord.count : 0;
+  const dailyCrystalRemaining = Math.max(
+    DAILY_CRYSTAL_LIMIT - dailyCrystalClaimed,
+    0
+  );
   const [lastGuardianCrystal, setLastGuardianCrystal] = useState(null);
   const ambientAudio = useRef(null);
   const shareRef = useRef(null);
@@ -480,15 +503,6 @@ export default function App() {
       // ignore storage errors
     }
   }, [lang]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.setItem(FOCUS_MODE_STORAGE_KEY, focusMode ? "1" : "0");
-    } catch (err) {
-      // ignore storage issues
-    }
-  }, [focusMode]);
 
   useEffect(() => {
     setShareHint(t("share.hintReady"));
@@ -601,6 +615,18 @@ export default function App() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
+      localStorage.setItem(
+        DAILY_CRYSTAL_TRACKER_KEY,
+        JSON.stringify(dailyCrystalRecord)
+      );
+    } catch (err) {
+      console.warn("Failed to persist daily crystal record:", err);
+    }
+  }, [dailyCrystalRecord]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
       localStorage.setItem(SPREAD_COUNT_KEY, String(spreadCount));
     } catch (err) {
       console.warn("Failed to persist spread count:", err);
@@ -617,9 +643,19 @@ export default function App() {
   }
 
   function grantCrystal(id, context = {}) {
-    if (!id) return null;
+    if (!id || dailyCrystalRemaining <= 0) return null;
     const snapshot = makeCrystalSnapshot(id, context);
-    return snapshot ? addCrystalSnapshot(snapshot) : null;
+    if (!snapshot) return null;
+    const added = addCrystalSnapshot(snapshot);
+    if (!added) return null;
+    setDailyCrystalRecord((prev) => {
+      const prevCount = prev.date === todayKey ? prev.count : 0;
+      return {
+        date: todayKey,
+        count: prevCount + 1,
+      };
+    });
+    return added;
   }
 
   function grantCardGuardian(card) {
@@ -1120,40 +1156,11 @@ Keywords: ${top.keywords.join(", ")}
   const pixelBoost = isHomeStage && starBoost;
   const pixelAccent = showMoonFragmentVisual ? "#cfe4ff" : activeTheme.accent;
 
-  const homeHighlights = [
-    {
-      id: "draw",
-      icon: "🃏",
-      title: "Instant oracle",
-      detail: "Single card focus.",
-      action: startDraw,
-      cta: t("home.single"),
-    },
-    {
-      id: "spread",
-      icon: "🌌",
-      title: "Three-card spread",
-      detail: "Past · Present · Future.",
-      action: startSpread,
-      cta: t("home.spread"),
-    },
-    {
-      id: "dream",
-      icon: "💧",
-      title: "Dream bottle",
-      detail: "Store a wish and let it glow.",
-      action: openDreamBottle,
-      cta: t("home.dreamBottle"),
-    },
-  ];
-
   return (
     <div
       className={`nw-root ${showMoonFragmentVisual ? "moon-fragment-on" : ""} ${
         showStarStoneVisual ? "star-stone-on" : ""
-      } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""} ${
-        focusMode ? "focus-mode" : ""
-      }`}
+      } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""}`}
     >
       <Background weather={weatherTheme} themeId={activeTheme.id} />
       <PixelStars
@@ -1183,10 +1190,22 @@ Keywords: ${top.keywords.join(", ")}
 
         <main className="nw-main">
         {spreadBlocked && (
-          <div className="limit-box spread-limit">
-            <p className="limit-text">
-              {t("spread.limitHint", { limit: SPREAD_FREE_LIMIT })}
-            </p>
+          <div className="limit-box spread-limit" aria-live="polite" aria-atomic="true">
+            <div className="limit-panel">
+              <div className="limit-icon" aria-hidden="true">
+                ✦
+              </div>
+              <div className="limit-body">
+                <div className="limit-pill">
+                  <span className="limit-pill-number">{SPREAD_FREE_LIMIT}</span>
+                  <span className="limit-pill-label">{t("spread.limitBadge")}</span>
+                </div>
+                <p className="limit-text">
+                  {t("spread.limitHint", { limit: SPREAD_FREE_LIMIT })}
+                </p>
+                <p className="limit-note">{t("spread.limitNote")}</p>
+              </div>
+            </div>
           </div>
         )}
         {stage === "home" && (
@@ -1231,31 +1250,6 @@ Keywords: ${top.keywords.join(", ")}
                 )}
               </div>
             </div>
-            <div className="home-highlight-grid">
-              {homeHighlights.map((block) => (
-                <article
-                  key={block.id}
-                  className="home-highlight-card"
-                  role="button"
-                  tabIndex={0}
-                  onClick={block.action}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      block.action();
-                    }
-                  }}
-                  aria-label={`${block.title} · ${block.cta}`}
-                >
-                  <div className="home-highlight-icon">{block.icon}</div>
-                  <div className="home-highlight-copy">
-                    <div className="home-highlight-title">{block.title}</div>
-                    <p className="home-highlight-desc">{block.detail}</p>
-                  </div>
-                  <span className="home-highlight-foot">{block.cta}</span>
-                </article>
-              ))}
-            </div>
           </section>
         )}
 
@@ -1274,11 +1268,6 @@ Keywords: ${top.keywords.join(", ")}
               </button>
               <button className="btn-main" onClick={openEncyclopedia}>
                 {t("home.encyclopedia")}
-              </button>
-            </div>
-            <div className="tarot-chat-callout">
-              <button className="btn-secondary" onClick={openMysticChat}>
-                {t("home.chat")}
               </button>
             </div>
           </div>
@@ -1518,6 +1507,9 @@ Keywords: ${top.keywords.join(", ")}
             moon={moon}
             crystals={collectedCrystals}
             dailyCrystal={dailyCrystal}
+            dailyCrystalLimit={DAILY_CRYSTAL_LIMIT}
+            dailyCrystalClaimed={dailyCrystalClaimed}
+            dailyCrystalRemaining={dailyCrystalRemaining}
             onGrantCrystal={grantCrystal}
           />
         )}
@@ -1723,16 +1715,13 @@ Keywords: ${top.keywords.join(", ")}
             ♫
           </button>
           <button
-            className={`panel-toggle focus-toggle ${focusMode ? "active" : ""}`}
+            className="panel-toggle dream-toggle"
             type="button"
-            aria-label={t("focus.label")}
-            aria-pressed={focusMode}
-            title={
-              focusMode ? t("focus.activeHint") : t("focus.inactiveHint")
-            }
-            onClick={() => setFocusMode((v) => !v)}
+            aria-label={t("home.dreamBottle")}
+            title={t("dream.tag")}
+            onClick={openDreamBottle}
           >
-            🧘
+            🫙
           </button>
           <button
             className={`cat-chat-trigger ${catChatVisible ? "active" : ""}`}

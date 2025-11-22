@@ -71,7 +71,9 @@
     "tap": "Tap to reveal",
     "new": "New three-card spread",
     "collectTitle": "Collect crystals",
-    "limitHint": "You get {limit} three-card spreads per day—come back tomorrow for more."
+    "limitHint": "You get {limit} three-card spreads per day—come back tomorrow for more.",
+    "limitBadge": "Daily cap",
+    "limitNote": "The night resets at midnight—return for a fresh draw."
   },
   "dream": {
     "title": "Dream Bottle",
@@ -108,7 +110,10 @@
     "gardenMiniHint": "You've collected {count} crystals. Tap to open the garden.",
     "gardenOverlayClose": "Close garden",
     "collectibleIntro": "Your crystal collection is a Pokemon-style log; the {phase} moon unlocks another slot.",
-  "collectibleHint": "Mood, weather, and tiny rituals awaken different gems - each bond can be strengthened with a tap.",
+    "collectibleHint": "Mood, weather, and tiny rituals awaken different gems - each bond can be strengthened with a tap.",
+    "collectibleLimit": "{claimed}/{limit} crystals today",
+    "collectibleReady": "New crystal opens after midnight.",
+    "collectibleLocked": "Daily crystal locked · come back at midnight.",
   "dailyCrystalLabel": "Tonight's crystal",
     "crystalEnergyLevel": "Energy",
   "crystalEmpty": "No crystals yet — draw one to awaken the garden.",
@@ -118,7 +123,7 @@
   "crystalStrengthenHint": "Give it a gentle shine to feel the bond.",
   "crystalStrengthened": "The bond glows with a soft pulse.",
   "crystalTasks": "Tasks",
-  "taskHint": "Complete these mini rituals to earn storybook crystals.",
+    "taskHint": "Tiny rituals spark a crystal glow.",
   "taskLoginLabel": "Daily login glow",
     "taskLoginDesc": "Sign in to receive Moonstone softness.",
     "taskWishLabel": "Wish note",

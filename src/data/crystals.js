@@ -6,7 +6,8 @@ export const CRYSTAL_LIBRARY = {
   celestite: {
     id: "celestite",
     name: "Celestite",
-    alias: "天青石",
+    alias: "Celestite",
+    cnname: "天青石",
     emoji: "✨",
     guardianFor: "The Star",
     palette: ["#d0e4ff", "#8aadff"],
@@ -24,7 +25,8 @@ export const CRYSTAL_LIBRARY = {
   amethyst: {
     id: "amethyst",
     name: "Amethyst",
-    alias: "紫水晶",
+    alias: "Amethyst",
+    cnname: "紫水晶",
     emoji: "💜",
     guardianFor: "The Hermit",
     palette: ["#d4b8ff", "#8663ff"],
@@ -42,7 +44,8 @@ export const CRYSTAL_LIBRARY = {
   citrine: {
     id: "citrine",
     name: "Citrine",
-    alias: "黄水晶",
+    alias: "Citrine",
+    cnname: "黄水晶",
     emoji: "☀️",
     guardianFor: "The Sun",
     palette: ["#ffd27a", "#ffb347"],
@@ -60,7 +63,8 @@ export const CRYSTAL_LIBRARY = {
   moonstone: {
     id: "moonstone",
     name: "Moonstone",
-    alias: "月光石",
+    alias: "Moonstone",
+    cnname: "月光石",
     emoji: "🌙",
     palette: ["#d6e6ff", "#a9c8ff"],
     energyRange: [76, 90],
@@ -77,7 +81,8 @@ export const CRYSTAL_LIBRARY = {
   fluorite: {
     id: "fluorite",
     name: "Fluorite",
-    alias: "萤石",
+    alias: "Fluorite",
+    cnname: "萤石",
     emoji: "🌀",
     palette: ["#a3ffef", "#6bd4ff"],
     energyRange: [70, 88],
@@ -94,7 +99,8 @@ export const CRYSTAL_LIBRARY = {
   rosequartz: {
     id: "rosequartz",
     name: "Rose Quartz",
-    alias: "粉晶",
+    alias: "Rose Quartz",
+    cnname: "粉晶",
     emoji: "🌸",
     palette: ["#ffc1d9", "#ff9bb7"],
     energyRange: [68, 86],
@@ -111,7 +117,8 @@ export const CRYSTAL_LIBRARY = {
   labradorite: {
     id: "labradorite",
     name: "Labradorite",
-    alias: "拉长石",
+    alias: "Labradorite",
+    cnname: "拉长石",
     emoji: "🌌",
     palette: ["#9bc8ff", "#6ba7e6"],
     energyRange: [72, 90],
@@ -128,7 +135,8 @@ export const CRYSTAL_LIBRARY = {
   obsidian: {
     id: "obsidian",
     name: "Obsidian",
-    alias: "黑曜石",
+    alias: "Obsidian",
+    cnname: "黑曜石",
     emoji: "🖤",
     palette: ["#2c2f3a", "#4c4f5f"],
     energyRange: [70, 88],
@@ -145,7 +153,8 @@ export const CRYSTAL_LIBRARY = {
   sunstone: {
     id: "sunstone",
     name: "Sunstone",
-    alias: "日光石",
+    alias: "Sunstone",
+    cnname: "日光石",
     emoji: "🌅",
     palette: ["#ffb38a", "#ff8c5a"],
     energyRange: [78, 94],
@@ -254,5 +263,6 @@ export function recommendCrystal({ weatherKey, moonPhase, emotion }) {
     reason: lines[0],
     focus: lines[1],
     palette: def.palette,
+    emoji: def.emoji,
   };
 }
