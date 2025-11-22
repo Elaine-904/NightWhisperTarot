@@ -349,6 +349,7 @@ export default function MysticChat({ onBack, t }) {
               <p className="mystic-paywall-body">
                 {t("mystic.limitHint", { limit: CHAT_LIMIT })}
               </p>
+              <p className="mystic-paywall-detail">{t("mystic.limitSupport")}</p>
             </div>
             <div className="mystic-paywall-cta">
               <a
@@ -356,11 +357,19 @@ export default function MysticChat({ onBack, t }) {
                 target="_blank"
                 rel="noreferrer"
                 className="mystic-paywall-link"
+                aria-label={`${t("mystic.limitButton")} · ${t("mystic.limitSupport")}`}
               >
-                <img
-                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=dreamyarcanastudio&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
-                  alt={t("mystic.limitButton")}
-                />
+                <span className="mystic-paywall-link-icon" aria-hidden="true">
+                  ☕
+                </span>
+                <div className="mystic-paywall-link-copy">
+                  <span className="mystic-paywall-link-text">
+                    {t("mystic.limitButton")}
+                  </span>
+                  <span className="mystic-paywall-link-note">
+                    {t("mystic.limitButtonNote")}
+                  </span>
+                </div>
               </a>
             </div>
           </div>

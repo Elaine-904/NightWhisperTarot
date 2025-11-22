@@ -7,6 +7,7 @@
   },
   "header": {
     "ambientLabel": "배경 사운드 선택",
+    "themeLabel": "테마",
     "switchTo": "변경",
     "playTrack": "재생",
     "pauseTrack": "정지"
@@ -186,6 +187,8 @@
     },
     "hint": "답변마다 새 카드가 뽑히며, 배경은 카드 색을 따라 숨을 쉽니다.",
     "stardustLabel": "스타더스트 조언",
-    "loading": "밤이 카드 배열을 펼치고, 스타더스트가 떨어지는 중…"
-  }
+  "loading": "밤이 카드 배열을 펼치고, 스타더스트가 떨어지는 중…",
+  "limitSupport": "작은 커피 한 잔이 오라클을 깨우고 또 다른 스프레드를 엽니다.",
+  "limitButtonNote": "추가 메시지 열기"
+}
 }

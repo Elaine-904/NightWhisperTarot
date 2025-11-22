@@ -41,6 +41,7 @@ const AMBIENT_TRACKS = [
     note: "Default Breeze",     // 原文: 默认夜风
     url: "/night-wind-chimes.wav",
     volume: 0.45,
+    icon: "🌙",
   },
   {
     id: "cafe-hum",
@@ -48,6 +49,7 @@ const AMBIENT_TRACKS = [
     note: "Soft Piano",         // 原文: 柔和钢琴
     url: "https://cdn.pixabay.com/download/audio/2023/05/01/audio_2e501a2fbf.mp3?filename=lofi-study-112191.mp3",
     volume: 0.35,
+    icon: "☕",
   },
   {
     id: "forest-soft",
@@ -55,6 +57,7 @@ const AMBIENT_TRACKS = [
     note: "Stream & Insects",   // 原文: 溪水虫鸣
     url: "https://cdn.pixabay.com/download/audio/2022/10/16/audio_9c8a9b9c96.mp3?filename=forest-lullaby-ambient-121089.mp3",
     volume: 0.5,
+    icon: "🌲",
   },
 ];
 
@@ -413,6 +416,8 @@ export default function App() {
   const [shareHint, setShareHint] = useState(() => t("share.hintReady"));
   const [audioOn, setAudioOn] = useState(false);
   const [trackId, setTrackId] = useState(AMBIENT_TRACKS[0].id);
+  const [musicPanelOpen, setMusicPanelOpen] = useState(false);
+  const [themePanelOpen, setThemePanelOpen] = useState(false);
   const [secretSeed, setSecretSeed] = useState(null);
   const [prophecyLine, setProphecyLine] = useState("");
 
@@ -959,6 +964,22 @@ Keywords: ${top.keywords.join(", ")}
     setShareHint(t("share.hintReady"));
   }
 
+  const toggleMusicPanel = () => {
+    setMusicPanelOpen((prev) => {
+      const next = !prev;
+      if (next) setThemePanelOpen(false);
+      return next;
+    });
+  };
+
+  const toggleThemePanel = () => {
+    setThemePanelOpen((prev) => {
+      const next = !prev;
+      if (next) setMusicPanelOpen(false);
+      return next;
+    });
+  };
+
   async function buildShareImage() {
     if (!currentCard || !shareRef.current || !reading) return;
     setShareBusy(true);
@@ -1129,55 +1150,103 @@ Keywords: ${top.keywords.join(", ")}
       />
 
       <header className="nw-header">
-        <div className="logo">🌙 NightWhisper Tarot</div>
-        <div className="header-actions">
-          <LangSwitcher lang={lang} setLang={setLang} />
-          <div className="sound-palette" aria-label={t("header.ambientLabel")}>
-            {AMBIENT_TRACKS.map((track) => {
-              const active = track.id === trackId;
-              return (
-                <button
-                  key={track.id}
-                  className={`sound-chip ${active ? "active" : ""}`}
-                  onClick={() => setTrackId(track.id)}
-                  aria-pressed={active}
-                  title={`${t("header.switchTo")} ${track.label}`}
-                >
-                  <span className="sound-chip-name">{track.label}</span>
-                  <span className="sound-chip-note">{track.note}</span>
-                </button>
-              );
-            })}
+        <div className="header-top">
+          <div className="logo">🌙 NightWhisper Tarot</div>
+          <div className="header-controls">
+            <button
+              className={`panel-toggle ${themePanelOpen ? "active" : ""}`}
+              type="button"
+              aria-label={t("header.themeLabel")}
+              aria-expanded={themePanelOpen}
+              aria-controls="theme-panel"
+              onClick={toggleThemePanel}
+            >
+              🎨
+            </button>
+            <button
+              className={`panel-toggle ${musicPanelOpen ? "active" : ""}`}
+              type="button"
+              aria-label={t("header.ambientLabel")}
+              aria-expanded={musicPanelOpen}
+              aria-controls="music-panel"
+              onClick={toggleMusicPanel}
+            >
+              🎧
+            </button>
+            <button
+              className={`sound-btn ${audioOn ? "active" : ""}`}
+              onClick={() => setAudioOn((v) => !v)}
+              aria-pressed={audioOn}
+              title={
+                audioOn
+                  ? `${t("header.pauseTrack")} ${currentTrack.label}`
+                  : `${t("header.playTrack")} ${currentTrack.label}`
+              }
+            >
+              ♫
+            </button>
           </div>
-          <div className="theme-picker" aria-label="Background themes">
-            {BACKGROUND_THEMES.map((theme) => {
-              const active = theme.id === backgroundThemeId;
-              return (
-                <button
-                  key={theme.id}
-                  type="button"
-                  className={`theme-chip ${active ? "active" : ""}`}
-                  onClick={() => setBackgroundThemeId(theme.id)}
-                  aria-pressed={active}
-                >
-                  <span className="theme-chip-emoji">{theme.emoji}</span>
-                  <span className="theme-chip-label">{theme.label}</span>
-                </button>
-              );
-            })}
-          </div>
-          <button
-            className={`sound-btn ${audioOn ? "active" : ""}`}
-            onClick={() => setAudioOn((v) => !v)}
-            aria-pressed={audioOn}
-            title={
-              audioOn
-                ? `${t("header.pauseTrack")} ${currentTrack.label}`
-                : `${t("header.playTrack")} ${currentTrack.label}`
-            }
-          >
-            ♫
-          </button>
+        </div>
+        <div className="header-panels">
+          {musicPanelOpen && (
+            <div
+              className="header-panel header-panel--music"
+              id="music-panel"
+              aria-label={t("header.ambientLabel")}
+            >
+              <div className="panel-title">{t("header.ambientLabel")}</div>
+              <div className="sound-palette" aria-live="polite">
+                {AMBIENT_TRACKS.map((track) => {
+                  const active = track.id === trackId;
+                  return (
+                    <button
+                      key={track.id}
+                      className={`sound-chip ${active ? "active" : ""}`}
+                      onClick={() => setTrackId(track.id)}
+                      aria-pressed={active}
+                      title={`${t("header.switchTo")} ${track.label}`}
+                    >
+                      <span className="sound-chip-icon" aria-hidden="true">
+                        {track.icon}
+                      </span>
+                      <span className="sr-only">{track.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {themePanelOpen && (
+            <div
+              className="header-panel header-panel--theme"
+              id="theme-panel"
+              aria-label={t("header.themeLabel")}
+            >
+              <div className="panel-title">{t("header.themeLabel")}</div>
+              <div className="panel-lang">
+                <LangSwitcher lang={lang} setLang={setLang} />
+              </div>
+              <div className="theme-chip-grid">
+                {BACKGROUND_THEMES.map((theme) => {
+                  const active = theme.id === backgroundThemeId;
+                  return (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      className={`theme-chip ${active ? "active" : ""}`}
+                      onClick={() => setBackgroundThemeId(theme.id)}
+                      aria-pressed={active}
+                      aria-label={theme.label}
+                      title={theme.label}
+                    >
+                      <span className="theme-chip-emoji">{theme.emoji}</span>
+                      <span className="sr-only">{theme.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </header>
 

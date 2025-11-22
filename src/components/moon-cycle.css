@@ -1,0 +1,351 @@
+*,
+:before,
+:after {
+  box-sizing: border-box;
+}
+
+.moon-section {
+  padding: 8px 14px 18px;
+}
+
+.moon-engine {
+  margin: 10px 0 16px;
+  padding: 14px 14px 16px;
+  background: radial-gradient(circle at 18% 20%, rgba(155, 232, 255, 0.18), transparent 40%),
+    radial-gradient(circle at 86% 0%, rgba(255, 211, 143, 0.18), transparent 32%),
+    linear-gradient(135deg, rgba(14, 10, 34, 0.92), rgba(9, 8, 28, 0.88));
+  border: 1px solid rgba(180, 170, 255, 0.45);
+  border-radius: 14px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.moon-engine::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle at 40% 35%, rgba(150, 225, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 75% 35%, rgba(255, 215, 170, 0.12), transparent 40%);
+  filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.moon-summary-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(210, 210, 255, 0.3);
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+.moon-summary-top {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
+  align-items: start;
+}
+
+.moon-summary-phase {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.moon-pill {
+  display: inline-block;
+  padding: 6px 10px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(180, 170, 255, 0.4);
+}
+
+.moon-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.moon-summary-emoji {
+  font-size: 28px;
+}
+
+.moon-sub {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.82;
+  line-height: 1.45;
+}
+
+.moon-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.moon-summary-chip {
+  flex: 1 1 120px;
+  min-width: 120px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 10px 14px;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.moon-summary-chip strong {
+  font-size: 16px;
+}
+
+.moon-summary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.moon-summary-meta {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  opacity: 0.9;
+}
+
+.moon-toggle-btn {
+  align-self: flex-start;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  color: #fff;
+}
+
+.moon-toggle-active {
+  border-color: rgba(210, 230, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.moon-summary-actions button:focus-visible {
+  outline: 2px solid rgba(155, 232, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.moon-details {
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.45s ease, opacity 0.35s ease, transform 0.35s ease;
+  transform: translateY(-6px);
+}
+
+.moon-details-active {
+  max-height: 1400px;
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 18px;
+  pointer-events: auto;
+}
+
+.moon-details-hidden {
+  pointer-events: none;
+}
+
+.moon-progress-block {
+  position: relative;
+  z-index: 1;
+  padding: 10px 10px 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(120, 110, 220, 0.07));
+  border: 1px solid rgba(160, 150, 240, 0.32);
+  border-radius: 12px;
+}
+
+.moon-progress-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: rgba(240, 245, 255, 0.85);
+  margin-bottom: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.moon-progress-label,
+.moon-progress-meta {
+  letter-spacing: 0.04em;
+}
+
+.moon-progress-track {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  border: 1px solid rgba(180, 170, 255, 0.25);
+}
+
+.moon-progress-fill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(159, 228, 255, 0.6);
+}
+
+.moon-progress-dot {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0f0a22;
+  border: 3px solid rgba(170, 230, 255, 0.9);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 14px rgba(155, 232, 255, 0.65);
+  transition: left 0.6s ease;
+}
+
+.moon-marker {
+  position: absolute;
+  top: -26px;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 10px;
+  color: rgba(220, 230, 255, 0.78);
+  letter-spacing: 0.04em;
+}
+
+.moon-marker-icon {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.moon-rituals {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.moon-ritual-card {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(180, 170, 255, 0.35);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 8px;
+}
+
+.moon-card-active {
+  background: linear-gradient(145deg, rgba(155, 228, 255, 0.16), rgba(255, 211, 143, 0.12));
+  border-color: rgba(195, 225, 255, 0.6);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.moon-card-locked {
+  opacity: 0.8;
+}
+
+.moon-ritual-title {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.moon-ritual-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(235, 240, 255, 0.9);
+}
+
+.moon-ritual-card button {
+  width: 100%;
+}
+
+.moon-ritual-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.moon-ritual-footer {
+  font-size: 11px;
+  color: rgba(220, 230, 255, 0.9);
+}
+
+.moon-burst {
+  animation: moonBurst 1.6s ease;
+  display: inline-block;
+}
+
+.moon-tone-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.88;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border: 1px dashed rgba(180, 170, 255, 0.4);
+}
+
+@keyframes moonGlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes moonBurst {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 900px) {
+  .moon-summary-top {
+    grid-template-columns: 1fr;
+  }
+}

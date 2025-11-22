@@ -7,6 +7,7 @@
   },
   "header": {
     "ambientLabel": "Choose ambient track",
+    "themeLabel": "Theme",
     "switchTo": "Switch to",
     "playTrack": "Play",
     "pauseTrack": "Pause"
@@ -196,8 +197,10 @@
     "hint": "Each reply redraws the spread; the background breathes with the cards.",
     "stardustLabel": "Stardust advice",
     "loading": "Night is laying out the spread, stardust is falling…",
-    "limitTitle": "Oracle recharge",
-    "limitHint": "The oracle rests after {limit} whispers. A small note on Buy Me a Coffee unlocks more guidance.",
-    "limitButton": "Buy me a coffee"
-  }
+  "limitTitle": "Oracle recharge",
+  "limitHint": "The oracle rests after {limit} whispers. A small note on Buy Me a Coffee unlocks more guidance.",
+  "limitButton": "Buy me a coffee",
+  "limitSupport": "A small coffee keeps the oracle awake and unlocks another round of spreads.",
+  "limitButtonNote": "Unlock more whispers"
+}
 }

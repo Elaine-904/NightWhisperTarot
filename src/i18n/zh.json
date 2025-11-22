@@ -7,6 +7,7 @@
   },
   "header": {
     "ambientLabel": "选择背景氛围",
+    "themeLabel": "主题",
     "switchTo": "切换到",
     "playTrack": "播放",
     "pauseTrack": "暂停"
@@ -186,6 +187,8 @@
     },
     "hint": "每次回复都会重新抽牌，背景随牌色呼吸变化。",
     "stardustLabel": "星尘建议",
-    "loading": "夜空在铺陈牌阵，星尘正在落下…"
-  }
+  "loading": "夜空在铺陈牌阵，星尘正在落下…",
+  "limitSupport": "一点咖啡让神谕保持清醒，并解锁更多牌阵。",
+  "limitButtonNote": "解锁更多启示"
+}
 }
