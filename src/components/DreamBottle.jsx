@@ -147,9 +147,9 @@ export default function DreamBottle({
           <span className="title-text">{t("dream.title")}</span>
           <span className="title-glimmer" aria-hidden="true" />
         </h2>
-        <p className="tag">{t("dream.tag")}</p>
+        <p className="tag focus-copy">{t("dream.tag")}</p>
         {secretBottle && bottleLine && (
-          <div className="secret-bottle-line">{bottleLine}</div>
+          <div className="secret-bottle-line focus-copy">{bottleLine}</div>
         )}
       </div>
 
@@ -180,7 +180,7 @@ export default function DreamBottle({
               <div className="bottle-sparkle sparkle-3" />
             </div>
           </div>
-          <div className="bottle-hint">{t("dream.hint")}</div>
+          <div className="bottle-hint focus-copy">{t("dream.hint")}</div>
         </div>
       </div>
 
@@ -255,10 +255,10 @@ export default function DreamBottle({
       </div>
 
       <div className="collection-summary">
-        <p className="tag">
+        <p className="tag focus-copy">
           {t("dream.collectibleIntro", { phase: crystalPhaseLabel })}
         </p>
-        <p className="tag">{t("dream.collectibleHint")}</p>
+        <p className="tag focus-copy">{t("dream.collectibleHint")}</p>
       </div>
 
       <div className="dream-garden-wrapper">

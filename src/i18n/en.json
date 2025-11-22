@@ -12,6 +12,11 @@
     "playTrack": "Play",
     "pauseTrack": "Pause"
   },
+  "focus": {
+    "label": "Focus mode",
+    "activeHint": "Calm copy · keep only essentials",
+    "inactiveHint": "Show every whisper"
+  },
   "home": {
     "title": "Draw a Night Whisper",
     "tag": "A gentle message waits in the quiet night.",
@@ -189,6 +194,7 @@
     "title": "Mystic Chat · Night Oracle",
     "tagline": "Ask a question → draw 1–3 cards → receive night words + stardust suggestions · maybe a starfall.",
     "back": "Back to main",
+    "closeLabel": "Close cat chat",
     "intro": "Share a question. I will draw 1–3 cards, offer night words, stardust advice, and maybe a starfall.",
     "placeholder": "Ask a thought that lives in your night… (Ctrl/Cmd + Enter to send)",
     "button": {

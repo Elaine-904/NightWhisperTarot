@@ -33,6 +33,8 @@ const TAROT_STAGES = new Set([
   "encyclopedia",
 ]);
 
+const FOCUS_MODE_STORAGE_KEY = "nightwhisper-focusMode";
+
 const AMBIENT_TRACKS = [
   {
     id: "night-wind",
@@ -418,6 +420,14 @@ export default function App() {
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [themePanelOpen, setThemePanelOpen] = useState(false);
   const [catChatVisible, setCatChatVisible] = useState(false);
+  const [focusMode, setFocusMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem(FOCUS_MODE_STORAGE_KEY) === "1";
+    } catch (err) {
+      return false;
+    }
+  });
   const [secretSeed, setSecretSeed] = useState(null);
   const [prophecyLine, setProphecyLine] = useState("");
 
@@ -471,6 +481,15 @@ export default function App() {
       // ignore storage errors
     }
   }, [lang]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(FOCUS_MODE_STORAGE_KEY, focusMode ? "1" : "0");
+    } catch (err) {
+      // ignore storage issues
+    }
+  }, [focusMode]);
 
   useEffect(() => {
     setShareHint(t("share.hintReady"));
@@ -1136,7 +1155,9 @@ Keywords: ${top.keywords.join(", ")}
     <div
       className={`nw-root ${showMoonFragmentVisual ? "moon-fragment-on" : ""} ${
         showStarStoneVisual ? "star-stone-on" : ""
-      } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""}`}
+      } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""} ${
+        focusMode ? "focus-mode" : ""
+      }`}
     >
       <Background weather={weatherTheme} themeId={activeTheme.id} />
       <PixelStars
@@ -1186,7 +1207,7 @@ Keywords: ${top.keywords.join(", ")}
               <div className="home-hero-copy">
                 <p className="home-hero-chip">NightWhisper Portal</p>
                 <h1>{t("home.title")}</h1>
-                <p className="home-hero-lede">{t("home.tag")}</p>
+                <p className="home-hero-lede focus-copy">{t("home.tag")}</p>
                 <div className="home-hero-meta">
                   {moon && (
                     <span className="home-hero-pill">
@@ -1265,7 +1286,7 @@ Keywords: ${top.keywords.join(", ")}
               </button>
             </div>
             <div className="tarot-chat-callout">
-              <p className="tag">{t("tarot.chatHint")}</p>
+              <p className="tag focus-copy">{t("tarot.chatHint")}</p>
               <button className="btn-secondary" onClick={openMysticChat}>
                 {t("home.chat")}
               </button>
@@ -1280,7 +1301,7 @@ Keywords: ${top.keywords.join(", ")}
         {stage === "draw" && (
           <div className="panel">
             <h2>{t("draw.title")}</h2>
-            <p className="tag">{t("draw.subtitle")}</p>
+            <p className="tag focus-copy">{t("draw.subtitle")}</p>
 
             <TarotCard
               card={null}
@@ -1425,7 +1446,7 @@ Keywords: ${top.keywords.join(", ")}
               >
                 {shareBusy ? t("share.rendering") : t("share.button")}
               </button>
-              <div className="share-hint">{shareHint}</div>
+              <div className="share-hint focus-copy">{shareHint}</div>
             </div>
           </div>
         )}
@@ -1433,7 +1454,7 @@ Keywords: ${top.keywords.join(", ")}
         {stage === "three" && spreadCards.length === 3 && (
           <div className="panel spread-panel">
             <h2>{t("spread.title")}</h2>
-            <p className="tag">{t("spread.subtitle")}</p>
+            <p className="tag focus-copy">{t("spread.subtitle")}</p>
 
             <div className="spread-body">
               <div className="spread-grid">
@@ -1712,10 +1733,22 @@ Keywords: ${top.keywords.join(", ")}
             ♫
           </button>
           <button
+            className={`panel-toggle focus-toggle ${focusMode ? "active" : ""}`}
+            type="button"
+            aria-label={t("focus.label")}
+            aria-pressed={focusMode}
+            title={
+              focusMode ? t("focus.activeHint") : t("focus.inactiveHint")
+            }
+            onClick={() => setFocusMode((v) => !v)}
+          >
+            🧘
+          </button>
+          <button
             className={`cat-chat-trigger ${catChatVisible ? "active" : ""}`}
             type="button"
             aria-label={t("mystic.title")}
-            onClick={() => setCatChatVisible(true)}
+            onClick={() => setCatChatVisible((visible) => !visible)}
           >
             <span className="cat-chat-icon" aria-hidden="true">
               😺
@@ -1725,25 +1758,19 @@ Keywords: ${top.keywords.join(", ")}
       </div>
 
       {catChatVisible && (
-        <div
-          className="cat-chat-overlay"
-          role="presentation"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeMysticChat();
-          }}
-        >
+        <div className="cat-chat-overlay" role="presentation">
           <div
             className="cat-chat-outlet"
             role="dialog"
             aria-label={t("mystic.title")}
           >
             <button
+              className="cat-chat-paw"
               type="button"
-              className="cat-chat-close"
               onClick={closeMysticChat}
-              aria-label={t("common.back")}
+              aria-label={t("mystic.closeLabel")}
             >
-              ✕
+              😺
             </button>
             <MysticChat
               onBack={closeMysticChat}

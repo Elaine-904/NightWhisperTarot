@@ -12,6 +12,11 @@
     "playTrack": "播放",
     "pauseTrack": "暂停"
   },
+  "focus": {
+    "label": "专注模式",
+    "activeHint": "轻语减负 · 仅保留重要内容",
+    "inactiveHint": "展示完整提示"
+  },
   "home": {
     "title": "抽一张夜语塔罗",
     "tag": "夜色里有一条温柔的讯息。",
@@ -180,6 +185,7 @@
     "title": "Mystic Chat · 夜语占卜",
     "tagline": "提问 → 抽 1～3 张牌 → 夜语解释 + 星尘建议 · 也许迎来星落事件",
     "back": "返回主界面",
+    "closeLabel": "关闭猫咪聊天",
     "intro": "写下你的问题。我会抽 1～3 张牌，送上夜语、星尘建议，也可能有星落事件。",
     "placeholder": "问我一个夜里正在想的念头…（Ctrl / Cmd + Enter 发送）",
     "button": {
