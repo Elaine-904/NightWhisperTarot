@@ -64,8 +64,7 @@
     "tap": "タップしてめくる",
     "new": "新しい三枚スプレッド",
     "collectTitle": "クリスタルを集める",
-    "limitHint": "無料の三枚スプレッドを{limit}回使い切りました。続きを知りたい方は Buy Me a Coffee で支援してください。",
-    "limitButton": "コーヒーで支援する"
+    "limitHint": "1日{limit}回の三枚スプレッドをご利用いただけます。明日またお越しください。"
   },
   "dream": {
     "title": "ドリームボトル",

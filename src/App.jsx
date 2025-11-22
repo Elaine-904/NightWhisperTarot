@@ -8,7 +8,6 @@ import TarotEncyclopedia from "./components/TarotEncyclopedia";
 import MoonCycleEngine from "./components/MoonCycleEngine";
 import MysticChat from "./components/MysticChat";
 import LangSwitcher from "./components/LangSwitcher";
-import { BUY_ME_COFFEE_URL } from "./support";
 import { getBrowserLang, LANGS, useI18n } from "./i18n";
 import { CARDS } from "./data/cards";
 import {
@@ -675,9 +674,6 @@ export default function App() {
   function startSpread() {
     if (spreadCount >= SPREAD_FREE_LIMIT) {
       setSpreadBlocked(true);
-      if (typeof window !== "undefined") {
-        window.open(BUY_ME_COFFEE_URL, "_blank", "noopener,noreferrer");
-      }
       return;
     }
 
@@ -1129,25 +1125,25 @@ Keywords: ${top.keywords.join(", ")}
       id: "draw",
       icon: "🃏",
       title: "Instant oracle",
-      detail: "Let a single card whisper tonight's focus.",
+      detail: "Single card focus.",
       action: startDraw,
-      button: t("home.single"),
+      cta: t("home.single"),
     },
     {
       id: "spread",
       icon: "🌌",
       title: "Three-card spread",
-      detail: "Map past, present, and future with gentle reveals.",
+      detail: "Past · Present · Future.",
       action: startSpread,
-      button: t("home.spread"),
+      cta: t("home.spread"),
     },
     {
       id: "dream",
       icon: "💧",
       title: "Dream bottle",
-      detail: "Lock a wish or gratitude and let it glow all night.",
+      detail: "Store a wish and let it glow.",
       action: openDreamBottle,
-      button: t("home.dreamBottle"),
+      cta: t("home.dreamBottle"),
     },
   ];
 
@@ -1187,25 +1183,16 @@ Keywords: ${top.keywords.join(", ")}
 
         <main className="nw-main">
         {spreadBlocked && (
-          <div className="bmc-box spread-limit">
-            <p className="bmc-text">
+          <div className="limit-box spread-limit">
+            <p className="limit-text">
               {t("spread.limitHint", { limit: SPREAD_FREE_LIMIT })}
             </p>
-            <a
-              className="bmc-btn"
-              href={BUY_ME_COFFEE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t("spread.limitButton")}
-            </a>
           </div>
         )}
         {stage === "home" && (
           <section className="panel panel-static home-stage">
             <div className="home-hero">
               <div className="home-hero-copy">
-                <p className="home-hero-chip">NightWhisper Portal</p>
                 <h1>{t("home.title")}</h1>
                 <p className="home-hero-lede focus-copy">{t("home.tag")}</p>
                 <div className="home-hero-meta">
@@ -1223,9 +1210,6 @@ Keywords: ${top.keywords.join(", ")}
                 <div className="home-hero-actions">
                   <button className="btn-main" onClick={startDraw}>
                     {t("home.single")}
-                  </button>
-                  <button className="btn-main" onClick={startSpread}>
-                    {t("home.spread")}
                   </button>
                   <button className="btn-secondary" onClick={openDreamBottle}>
                     {t("home.dreamBottle")}
@@ -1249,19 +1233,26 @@ Keywords: ${top.keywords.join(", ")}
             </div>
             <div className="home-highlight-grid">
               {homeHighlights.map((block) => (
-                <article key={block.id} className="home-highlight-card">
+                <article
+                  key={block.id}
+                  className="home-highlight-card"
+                  role="button"
+                  tabIndex={0}
+                  onClick={block.action}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      block.action();
+                    }
+                  }}
+                  aria-label={`${block.title} · ${block.cta}`}
+                >
                   <div className="home-highlight-icon">{block.icon}</div>
                   <div className="home-highlight-copy">
                     <div className="home-highlight-title">{block.title}</div>
                     <p className="home-highlight-desc">{block.detail}</p>
                   </div>
-                  <button
-                    type="button"
-                    className="chip-btn home-highlight-btn"
-                    onClick={block.action}
-                  >
-                    {block.button}
-                  </button>
+                  <span className="home-highlight-foot">{block.cta}</span>
                 </article>
               ))}
             </div>
@@ -1286,7 +1277,6 @@ Keywords: ${top.keywords.join(", ")}
               </button>
             </div>
             <div className="tarot-chat-callout">
-              <p className="tag focus-copy">{t("tarot.chatHint")}</p>
               <button className="btn-secondary" onClick={openMysticChat}>
                 {t("home.chat")}
               </button>

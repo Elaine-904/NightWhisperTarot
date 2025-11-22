@@ -64,8 +64,7 @@
     "tap": "눌러서 펼치기",
     "new": "새로운 세 장",
     "collectTitle": "크리스탈 수집하기",
-    "limitHint": "무료 세 장 스프레드를 {limit}회 사용했습니다. 계속하려면 Buy Me a Coffee로 응원해주세요.",
-    "limitButton": "커피로 응원하기"
+    "limitHint": "하루에 {limit}번의 세 장 스프레드를 사용할 수 있습니다. 내일 다시 와주세요."
   },
   "dream": {
     "title": "드림 보틀",

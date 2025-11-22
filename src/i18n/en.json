@@ -19,7 +19,7 @@
   },
   "home": {
     "title": "Draw a Night Whisper",
-    "tag": "A gentle message waits in the quiet night.",
+    "tag": "Listen to the night whisper.",
     "single": "Single card",
     "spread": "Three-card spread (Past / Present / Future)",
     "dreamBottle": "Dream Bottle",
@@ -71,8 +71,7 @@
     "tap": "Tap to reveal",
     "new": "New three-card spread",
     "collectTitle": "Collect crystals",
-    "limitHint": "You've used {limit} free three-card spreads. To draw more, please buy me a coffee.",
-    "limitButton": "Buy me a coffee"
+    "limitHint": "You get {limit} three-card spreads per day—come back tomorrow for more."
   },
   "dream": {
     "title": "Dream Bottle",

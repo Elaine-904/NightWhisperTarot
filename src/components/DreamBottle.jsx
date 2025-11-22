@@ -191,7 +191,6 @@ export default function DreamBottle({
         <textarea
           id="wish-input"
           className="wish-input"
-          placeholder={t("dream.placeholder")}
           value={wishText}
           onChange={(e) => setWishText(e.target.value)}
           rows={3}

@@ -335,10 +335,6 @@ export default function MysticChat({ onBack, t, floating = false, showBackButton
     >
       <div className="mystic-halo" aria-hidden="true" />
       <header className="mystic-header">
-        <div>
-          <h2>{t("mystic.title")}</h2>
-          <p className="tag">{t("mystic.tagline")}</p>
-        </div>
         {showBackButton && (
           <button className="btn-secondary slim" onClick={onBack}>
             {t("mystic.back")}
@@ -443,11 +439,6 @@ export default function MysticChat({ onBack, t, floating = false, showBackButton
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={
-            limitReached
-              ? t("mystic.limitHint", { limit: CHAT_LIMIT })
-              : t("mystic.placeholder")
-          }
           rows={3}
           disabled={limitReached}
         />

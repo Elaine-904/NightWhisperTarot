@@ -28,6 +28,5 @@
   "dream.taskWishDesc": "Write a bottle wish to invite Rose Quartz warmth.",
   "dream.taskRitualLabel": "Mini ritual spark",
   "dream.taskRitualDesc": "Light a tiny ritual to earn Citrine brightness.",
-  "spread.limitHint": "Vous avez déjà utilisé {limit} tirages gratuits de trois cartes. Pour continuer, invitez-moi à boire un café.",
-  "spread.limitButton": "Offrez-moi un café"
+  "spread.limitHint": "Vous disposez de {limit} tirages de trois cartes par jour — revenez demain pour continuer."
 }
