@@ -342,6 +342,29 @@ export default function MysticChat({ onBack, t }) {
       </header>
 
       <div className="mystic-shell">
+        {limitReached && (
+          <div className="mystic-paywall" aria-live="polite">
+            <div className="mystic-paywall-copy">
+              <p className="mystic-paywall-title">{t("mystic.limitTitle")}</p>
+              <p className="mystic-paywall-body">
+                {t("mystic.limitHint", { limit: CHAT_LIMIT })}
+              </p>
+            </div>
+            <div className="mystic-paywall-cta">
+              <a
+                href={BUY_ME_COFFEE_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="mystic-paywall-link"
+              >
+                <img
+                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=dreamyarcanastudio&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
+                  alt={t("mystic.limitButton")}
+                />
+              </a>
+            </div>
+          </div>
+        )}
         <div className="chat-window" ref={logRef}>
         {messages.map((msg) => {
           if (msg.role === "user") {
@@ -407,7 +430,7 @@ export default function MysticChat({ onBack, t }) {
           onKeyDown={handleKeyDown}
           placeholder={
             limitReached
-              ? "After five whispers the night asks for a tip—Buy Me a Coffee to continue."
+              ? t("mystic.limitHint", { limit: CHAT_LIMIT })
               : t("mystic.placeholder")
           }
           rows={3}
@@ -434,21 +457,6 @@ export default function MysticChat({ onBack, t }) {
             </span>
           )}
         </div>
-        {limitReached && (
-          <div className="mystic-paywall">
-            <span>
-              The oracle rests after five whispers. A small note on Buy Me a Coffee unlocks more.
-            </span>
-            <a
-              href={BUY_ME_COFFEE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="mystic-paywall-link"
-            >
-              Buy me a coffee
-            </a>
-          </div>
-        )}
         </div>
       </div>
 

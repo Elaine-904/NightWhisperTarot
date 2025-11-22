@@ -445,6 +445,82 @@ body {
   }
 }
 
+@media (min-width: 960px) {
+  .nw-main {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    padding: clamp(30px, 3vw, 48px);
+    padding-bottom: clamp(120px, 8vw, 160px);
+    gap: 30px;
+    min-height: auto;
+  }
+
+  .nw-main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 34px;
+    background: radial-gradient(
+        circle at 40% -10%,
+        rgba(255, 255, 255, 0.12),
+        transparent 55%
+      ),
+      radial-gradient(circle at 70% 120%, rgba(173, 201, 255, 0.08), transparent 55%);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .nw-main > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel,
+  .panel.panel-static,
+  .full-section {
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    min-height: auto;
+    border-radius: 32px;
+    padding: clamp(26px, 3.1vw, 48px);
+    box-shadow:
+      0 42px 65px rgba(3, 2, 12, 0.65),
+      0 18px 40px rgba(0, 0, 0, 0.35),
+      0 0 25px rgba(6, 11, 35, 0.45);
+    backdrop-filter: blur(18px);
+  }
+
+  .panel {
+    background: linear-gradient(
+      180deg,
+      rgba(8, 6, 20, 0.95),
+      rgba(14, 9, 32, 0.98)
+    );
+  }
+
+  .panel.panel-static {
+    border-color: rgba(210, 215, 255, 0.45);
+  }
+
+  .home-stage {
+    width: 100%;
+  }
+
+  .home-hero {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .home-hero-visual {
+    flex: 0 0 320px;
+  }
+
+  .home-highlight-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
 .tarot-panel {
   display: flex;
   flex-direction: column;
@@ -831,38 +907,72 @@ h2 {
 }
 
 .mystic-paywall {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 180, 140, 0.5);
-  background: linear-gradient(160deg, rgba(255, 236, 210, 0.2), rgba(15, 10, 30, 0.85));
+  margin-bottom: 18px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 249, 235, 0.95),
+    rgba(22, 12, 40, 0.92) 70%
+  );
+  box-shadow: 0 18px 45px rgba(3, 2, 8, 0.65);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.mystic-paywall-title {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.mystic-paywall-body {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff5de;
+}
+
+.mystic-paywall-cta {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
-  font-size: 12px;
-  color: #ffe3c1;
+  align-items: center;
+  justify-content: center;
 }
 
 .mystic-paywall-link {
   display: inline-flex;
-  align-self: flex-start;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ffe5a8, #ffd08f);
-  color: #2c1000;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 10px 20px rgba(255, 190, 140, 0.35);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+}
+
+.mystic-paywall-link img {
+  display: block;
+  width: min(215px, 100%);
+  height: auto;
 }
 
 .mystic-paywall-link:hover,
 .mystic-paywall-link:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(255, 190, 140, 0.5);
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 640px) {
+  .mystic-paywall {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: left;
+  }
+
+  .mystic-paywall-cta {
+    justify-content: flex-start;
+  }
 }
 
 /* ------------------------------
@@ -3488,33 +3598,83 @@ h2 {
 }
 
 .crystal-garden {
-  background: linear-gradient(160deg, rgba(8, 8, 18, 0.92), rgba(18, 10, 32, 0.85));
-  border: 1px solid rgba(215, 210, 255, 0.35);
-  border-radius: 22px;
-  padding: 22px;
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: clamp(24px, 2.8vw, 36px);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.18), transparent 42%),
+    radial-gradient(circle at 85% 0%, rgba(99, 210, 255, 0.12), transparent 50%),
+    linear-gradient(160deg, rgba(10, 10, 24, 0.95), rgba(20, 11, 38, 0.92));
+  border: 1px solid rgba(220, 210, 255, 0.28);
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  box-shadow: 0 32px 64px rgba(2, 1, 8, 0.85);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+}
+.crystal-garden::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 65% 20%, rgba(255, 255, 255, 0.08), transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+.crystal-garden > * {
+  position: relative;
+  z-index: 1;
+}
+.garden-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+.garden-side {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 960px) {
+  .crystal-garden {
+    padding: clamp(20px, 4vw, 32px);
+  }
+}
+
+@media (max-width: 840px) {
+  .garden-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 .garden-header {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 420px;
+  color: #f2f2ff;
+  text-shadow: 0 4px 18px rgba(3, 1, 8, 0.9);
 }
 
 .garden-title {
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   max-width: 100%;
+  color: #fafcff;
+  font-weight: 600;
 }
 
 .garden-sub {
   font-size: 13px;
-  color: rgba(220, 220, 255, 0.8);
-  max-width: 380px;
+  color: rgba(225, 228, 255, 0.9);
+  max-width: 420px;
+  line-height: 1.5;
 }
 
 .garden-daily-card {
@@ -3555,22 +3715,24 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
+  grid-auto-rows: minmax(120px, auto);
+  align-content: stretch;
 }
 
 .garden-empty {
   padding: 18px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(200, 200, 255, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(220, 220, 255, 0.35);
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .crystal-tile {
   position: relative;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 10px;
   color: #fff;
   min-height: 92px;
@@ -3579,11 +3741,14 @@ h2 {
   justify-content: space-between;
   overflow: hidden;
   cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  backdrop-filter: blur(10px);
 }
 
 .crystal-tile.active {
-  border-color: rgba(170, 210, 255, 0.9);
-  box-shadow: 0 10px 28px rgba(110, 150, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 40px rgba(110, 150, 255, 0.45);
+  transform: translateY(-2px);
 }
 
 .tile-sparkle {
@@ -3594,6 +3759,7 @@ h2 {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 60%);
   opacity: 0.45;
   animation: crystalPulse 4s ease-in-out infinite;
+  mix-blend-mode: screen;
 }
 
 .tile-name {
@@ -3609,30 +3775,48 @@ h2 {
 }
 
 .crystal-detail {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 18px;
-  padding: 18px;
-  min-height: 160px;
-  border: 1px solid rgba(160, 160, 255, 0.42);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  background: linear-gradient(180deg, rgba(18, 19, 36, 0.98), rgba(8, 8, 18, 0.95));
+  border-radius: 22px;
+  padding: 20px;
+  min-height: 200px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+}
+.crystal-detail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 40%);
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 0;
+}
+.crystal-detail > * {
+  position: relative;
+  z-index: 1;
 }
 
 .detail-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 6px;
+  letter-spacing: 0.02em;
 }
 
 .detail-guardian {
   font-size: 12px;
-  color: rgba(210, 220, 255, 0.8);
+  color: rgba(235, 235, 255, 0.9);
   margin-bottom: 8px;
 }
 
 .detail-use,
 .detail-nightly {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(250, 250, 255, 0.92);
   margin-bottom: 4px;
 }
 
@@ -3640,16 +3824,18 @@ h2 {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.6;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .detail-strengthen {
-  margin-top: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .detail-strength-hint {
@@ -3665,7 +3851,7 @@ h2 {
 
 .detail-empty {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   text-align: center;
   padding: 16px 0;
 }
@@ -3673,7 +3859,13 @@ h2 {
 .garden-tasks {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
 }
 
 .garden-task-label {
@@ -3687,7 +3879,7 @@ h2 {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(220, 235, 255, 0.75);
+  color: rgba(240, 245, 255, 0.82);
 }
 
 .garden-task-list {
@@ -3697,8 +3889,8 @@ h2 {
 }
 
 .task-chip {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(200, 180, 255, 0.4);
+  background: linear-gradient(180deg, rgba(40, 28, 68, 0.85), rgba(12, 10, 28, 0.9));
+  border: 1px solid rgba(210, 195, 255, 0.45);
   border-radius: 18px;
   padding: 16px 18px;
   text-align: left;
@@ -3708,22 +3900,26 @@ h2 {
   gap: 6px;
   cursor: pointer;
   min-height: 90px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 12px 20px rgba(1, 1, 8, 0.5);
 }
 
 .task-chip:hover {
-  border-color: rgba(255, 220, 170, 0.9);
+  border-color: rgba(255, 255, 255, 0.85);
   transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 16px 30px rgba(10, 10, 30, 0.65);
 }
 
 .task-title {
   font-size: 12px;
   font-weight: 600;
+  color: #fff;
 }
 
 .task-desc {
   font-size: 11px;
-  opacity: 0.7;
+  color: rgba(238, 238, 255, 0.8);
+  line-height: 1.3;
 }
 
 @keyframes crystalPulse {

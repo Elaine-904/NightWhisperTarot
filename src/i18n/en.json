@@ -195,6 +195,9 @@
     },
     "hint": "Each reply redraws the spread; the background breathes with the cards.",
     "stardustLabel": "Stardust advice",
-    "loading": "Night is laying out the spread, stardust is falling…"
+    "loading": "Night is laying out the spread, stardust is falling…",
+    "limitTitle": "Oracle recharge",
+    "limitHint": "The oracle rests after {limit} whispers. A small note on Buy Me a Coffee unlocks more guidance.",
+    "limitButton": "Buy me a coffee"
   }
 }

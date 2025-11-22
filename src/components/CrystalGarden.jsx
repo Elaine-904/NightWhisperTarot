@@ -99,83 +99,87 @@ export default function CrystalGarden({
         )}
       </div>
 
-      <div className="garden-grid">
-        {crystals.length === 0 ? (
-          <div className="garden-empty">{t("dream.crystalEmpty")}</div>
-        ) : (
-          crystals.map((crystal) => (
-            <button
-              key={crystal.id}
-              type="button"
-              className={`crystal-tile ${crystal.id === activeId ? "active" : ""}`}
-              onClick={() => setActiveId(crystal.id)}
-              style={{ background: buildTileGradient(crystal) }}
-            >
-              <span className="tile-sparkle" aria-hidden="true" />
-              <span className="tile-name">
-                {crystal.name}
-              </span>
-              <span className="tile-energy">
-                {t("dream.crystalEnergyLevel")} {crystal.energy}
-              </span>
-            </button>
-          ))
-        )}
-      </div>
-
-      <div className="crystal-detail">
-        {activeCrystal ? (
-          <>
-            <div className="detail-name">
-              {activeCrystal.alias
-                ? `${activeCrystal.name}`
-                : activeCrystal.name}
-            </div>
-            <div className="detail-guardian">
-              {activeCrystal.guardianNote}
-            </div>
-            <div className="detail-use">{activeCrystal.use}</div>
-            <div className="detail-nightly">{activeCrystal.nightly}</div>
-            <div className="detail-meta">
-              {t("dream.crystalCollected")} {activeCrystal.date}
-            </div>
-            <div
-              className={`detail-strengthen${isStrengthened ? " active" : ""}`}
-            >
+      <div className="garden-body">
+        <div className="garden-grid">
+          {crystals.length === 0 ? (
+            <div className="garden-empty">{t("dream.crystalEmpty")}</div>
+          ) : (
+            crystals.map((crystal) => (
               <button
+                key={crystal.id}
                 type="button"
-                className="chip-btn"
-                onClick={() => handleStrengthen(activeCrystal.id)}
+                className={`crystal-tile ${crystal.id === activeId ? "active" : ""}`}
+                onClick={() => setActiveId(crystal.id)}
+                style={{ background: buildTileGradient(crystal) }}
               >
-                {t("dream.crystalStrengthen")}
+                <span className="tile-sparkle" aria-hidden="true" />
+                <span className="tile-name">
+                  {crystal.name}
+                </span>
+                <span className="tile-energy">
+                  {t("dream.crystalEnergyLevel")} {crystal.energy}
+                </span>
               </button>
-              <span className="detail-strength-hint">
-                {isStrengthened
-                  ? t("dream.crystalStrengthened")
-                  : t("dream.crystalStrengthenHint")}
-              </span>
-            </div>
-          </>
-        ) : (
-          <div className="detail-empty">{t("dream.crystalSelectHint")}</div>
-        )}
-      </div>
+            ))
+          )}
+        </div>
 
-      <div className="garden-tasks">
-        <div className="garden-task-label">{t("dream.crystalTasks")}</div>
-        <div className="garden-task-hint">{t("dream.taskHint")}</div>
-        <div className="garden-task-list">
-          {BONUS_TASKS.map((task) => (
-            <button
-              key={task.id}
-              type="button"
-              className="task-chip"
-              onClick={() => handleTaskClaim(task.crystalId)}
-            >
-              <div className="task-title">{t(task.labelKey)}</div>
-              <div className="task-desc">{t(task.descKey)}</div>
-            </button>
-          ))}
+        <div className="garden-side">
+          <div className="crystal-detail">
+            {activeCrystal ? (
+              <>
+                <div className="detail-name">
+                  {activeCrystal.alias
+                    ? `${activeCrystal.name}`
+                    : activeCrystal.name}
+                </div>
+                <div className="detail-guardian">
+                  {activeCrystal.guardianNote}
+                </div>
+                <div className="detail-use">{activeCrystal.use}</div>
+                <div className="detail-nightly">{activeCrystal.nightly}</div>
+                <div className="detail-meta">
+                  {t("dream.crystalCollected")} {activeCrystal.date}
+                </div>
+                <div
+                  className={`detail-strengthen${isStrengthened ? " active" : ""}`}
+                >
+                  <button
+                    type="button"
+                    className="chip-btn"
+                    onClick={() => handleStrengthen(activeCrystal.id)}
+                  >
+                    {t("dream.crystalStrengthen")}
+                  </button>
+                  <span className="detail-strength-hint">
+                    {isStrengthened
+                      ? t("dream.crystalStrengthened")
+                      : t("dream.crystalStrengthenHint")}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="detail-empty">{t("dream.crystalSelectHint")}</div>
+            )}
+          </div>
+
+          <div className="garden-tasks">
+            <div className="garden-task-label">{t("dream.crystalTasks")}</div>
+            <div className="garden-task-hint">{t("dream.taskHint")}</div>
+            <div className="garden-task-list">
+              {BONUS_TASKS.map((task) => (
+                <button
+                  key={task.id}
+                  type="button"
+                  className="task-chip"
+                  onClick={() => handleTaskClaim(task.crystalId)}
+                >
+                  <div className="task-title">{t(task.labelKey)}</div>
+                  <div className="task-desc">{t(task.descKey)}</div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
