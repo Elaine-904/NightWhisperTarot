@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CARDS } from "../data/cards";
 import { askAI } from "../api/aiClient";
+import { BUY_ME_COFFEE_URL } from "../support";
+
+const CHAT_LIMIT = 5;
 
 function shuffle(arr) {
   const copy = [...arr];
@@ -192,6 +195,11 @@ export default function MysticChat({ onBack, t }) {
   const [activePalette, setActivePalette] = useState(paletteFromCards([]));
   const [starfall, setStarfall] = useState(null);
   const logRef = useRef(null);
+  const [chatCount, setChatCount] = useState(0);
+  const limitReached = chatCount >= CHAT_LIMIT;
+  const remainingChats = Math.max(CHAT_LIMIT - chatCount, 0);
+  const recordChatUse = () =>
+    setChatCount((prev) => Math.min(CHAT_LIMIT, prev + 1));
 
   useEffect(() => {
     if (!logRef.current) return;
@@ -232,6 +240,7 @@ export default function MysticChat({ onBack, t }) {
   async function handleSend() {
     const trimmed = question.replace(/\s+/g, " ").trim();
     if (!trimmed || busy) return;
+    if (limitReached) return;
 
     const cards = drawCards();
     const palette = paletteFromCards(cards);
@@ -280,6 +289,8 @@ export default function MysticChat({ onBack, t }) {
       if (starfallHint) {
         setStarfall({ text: starfallHint, accent: palette.accent });
       }
+
+      recordChatUse();
     } catch (err) {
       console.error("Mystic chat failed:", err);
       const fallbackCards = cards.map((card, idx) => ({
@@ -303,6 +314,8 @@ export default function MysticChat({ onBack, t }) {
       if (starfallHint) {
         setStarfall({ text: starfallHint, accent: palette.accent });
       }
+
+      recordChatUse();
     } finally {
       setBusy(false);
     }
@@ -316,9 +329,9 @@ export default function MysticChat({ onBack, t }) {
   }
 
   return (
-    <div className="panel mystic-panel" style={paletteStyle}>
+    <section className="full-section mystic-section" style={paletteStyle}>
       <div className="mystic-halo" aria-hidden="true" />
-      <div className="mystic-header">
+      <header className="mystic-header">
         <div>
           <h2>{t("mystic.title")}</h2>
           <p className="tag">{t("mystic.tagline")}</p>
@@ -326,9 +339,10 @@ export default function MysticChat({ onBack, t }) {
         <button className="btn-secondary slim" onClick={onBack}>
           {t("mystic.back")}
         </button>
-      </div>
+      </header>
 
-      <div className="chat-window" ref={logRef}>
+      <div className="mystic-shell">
+        <div className="chat-window" ref={logRef}>
         {messages.map((msg) => {
           if (msg.role === "user") {
             return (
@@ -384,21 +398,57 @@ export default function MysticChat({ onBack, t }) {
             </div>
           </div>
         )}
-      </div>
+        </div>
 
-      <div className="chat-input-row">
+        <div className="chat-input-row">
         <textarea
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t("mystic.placeholder")}
+          placeholder={
+            limitReached
+              ? "After five whispers the night asks for a tip—Buy Me a Coffee to continue."
+              : t("mystic.placeholder")
+          }
           rows={3}
+          disabled={limitReached}
         />
         <div className="chat-actions">
-          <button className="btn-main" onClick={handleSend} disabled={busy}>
+          <button
+            className="btn-main"
+            onClick={handleSend}
+            disabled={busy || limitReached}
+          >
             {busy ? t("mystic.button.sending") : t("mystic.button.send")}
           </button>
           <div className="hint">{t("mystic.hint")}</div>
+        </div>
+        <div className="chat-status-row">
+          <span className="chat-status-pill">
+            Whisper count: {Math.min(chatCount, CHAT_LIMIT)}/{CHAT_LIMIT}
+          </span>
+          {!limitReached && (
+            <span className="chat-status-hint">
+              {remainingChats} whisper
+              {remainingChats === 1 ? "" : "s"} left before a tip request.
+            </span>
+          )}
+        </div>
+        {limitReached && (
+          <div className="mystic-paywall">
+            <span>
+              The oracle rests after five whispers. A small note on Buy Me a Coffee unlocks more.
+            </span>
+            <a
+              href={BUY_ME_COFFEE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="mystic-paywall-link"
+            >
+              Buy me a coffee
+            </a>
+          </div>
+        )}
         </div>
       </div>
 
@@ -412,6 +462,6 @@ export default function MysticChat({ onBack, t }) {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Background from "./components/Background";
+import Background, { BACKGROUND_THEMES } from "./components/Background";
 import PixelStars from "./components/PixelStars";
 import TarotCard from "./components/TarotCard";
 import DreamBottle from "./components/DreamBottle";
@@ -8,6 +8,7 @@ import TarotEncyclopedia from "./components/TarotEncyclopedia";
 import MoonCycleEngine from "./components/MoonCycleEngine";
 import MysticChat from "./components/MysticChat";
 import LangSwitcher from "./components/LangSwitcher";
+import { BUY_ME_COFFEE_URL } from "./support";
 import { getBrowserLang, LANGS, useI18n } from "./i18n";
 import { CARDS } from "./data/cards";
 import {
@@ -21,7 +22,17 @@ import { getMoonCycle } from "./moon";
 import html2canvas from "html2canvas";
 
 const SPREAD_POSITIONS = ["past", "present", "future"];
+const SPREAD_FREE_LIMIT = 3;
+const SPREAD_COUNT_KEY = "nightSpreadCount";
 const LANG_STORAGE_KEY = "nightwhisper-lang";
+const TAROT_STAGES = new Set([
+  "tarot",
+  "draw",
+  "result",
+  "three",
+  "encyclopedia",
+  "chat",
+]);
 
 const AMBIENT_TRACKS = [
   {
@@ -59,6 +70,18 @@ function readCrystalGarden() {
     console.warn("Failed to read crystals:", err);
   }
   return [];
+}
+
+function readSpreadCount() {
+  if (typeof window === "undefined") return 0;
+  try {
+    const stored = parseInt(localStorage.getItem(SPREAD_COUNT_KEY) || "0", 10);
+    if (Number.isNaN(stored)) return 0;
+    return Math.max(0, stored);
+  } catch (err) {
+    console.warn("Failed to read spread usage:", err);
+    return 0;
+  }
 }
 
 function getGuardianCrystalId(card) {
@@ -393,6 +416,11 @@ export default function App() {
   const [secretSeed, setSecretSeed] = useState(null);
   const [prophecyLine, setProphecyLine] = useState("");
 
+  const initialSpreadCount = useMemo(() => readSpreadCount(), []);
+  const [spreadCount, setSpreadCount] = useState(initialSpreadCount);
+  const [spreadBlocked, setSpreadBlocked] = useState(
+    initialSpreadCount >= SPREAD_FREE_LIMIT
+  );
   const [spreadCards, setSpreadCards] = useState([]);
   const [spreadFlips, setSpreadFlips] = useState([false, false, false]);
   const [spreadReading, setSpreadReading] = useState({
@@ -402,9 +430,11 @@ export default function App() {
   });
   const [spreadLoading, setSpreadLoading] = useState(false);
   const [spreadCrystals, setSpreadCrystals] = useState(() => buildSpreadCrystalSet([]));
-  const [lastSpreadFocus, setLastSpreadFocus] = useState("spread");
 
-  const [bgTheme, setBgTheme] = useState("night");
+  const [weatherTheme, setWeatherTheme] = useState("night");
+  const [backgroundThemeId, setBackgroundThemeId] = useState(
+    BACKGROUND_THEMES[0].id
+  );
   const [moon, setMoon] = useState(() => getMoonCycle());
   const [collectedCrystals, setCollectedCrystals] = useState(() => {
     if (typeof window === "undefined") return [];
@@ -464,7 +494,7 @@ export default function App() {
     }
 
     if (seed?.hit && seed.id === "easter-aurora") {
-      setBgTheme("aurora");
+      setBackgroundThemeId("aurora");
     }
   }, []);
 
@@ -472,7 +502,6 @@ export default function App() {
     let cancelled = false;
     async function load() {
       if (secretSeed?.id === "easter-aurora") {
-        setBgTheme("aurora");
         return;
       }
 
@@ -488,11 +517,11 @@ export default function App() {
           const data = await res.json();
           const w = data.current_weather;
           if (cancelled || secretSeed?.id === "easter-aurora") return;
-          setBgTheme(resolveTheme(hour, w.weathercode, w.is_day));
+          setWeatherTheme(resolveTheme(hour, w.weathercode, w.is_day));
         },
         () => {
           if (cancelled || secretSeed?.id === "easter-aurora") return;
-          setBgTheme(resolveTheme(hour, 0, 1));
+          setWeatherTheme(resolveTheme(hour, 0, 1));
         }
       );
     }
@@ -545,6 +574,15 @@ export default function App() {
       console.warn("Failed to persist crystals:", err);
     }
   }, [collectedCrystals]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(SPREAD_COUNT_KEY, String(spreadCount));
+    } catch (err) {
+      console.warn("Failed to persist spread count:", err);
+    }
+  }, [spreadCount]);
 
   function addCrystalSnapshot(snapshot) {
     if (!snapshot) return null;
@@ -606,9 +644,16 @@ export default function App() {
     setStage("encyclopedia");
   }
 
-  function startSpread(opts = {}) {
-    const focusHint = typeof opts?.focus === "string" ? opts.focus : "spread";
-    setLastSpreadFocus(focusHint);
+  function startSpread() {
+    if (spreadCount >= SPREAD_FREE_LIMIT) {
+      setSpreadBlocked(true);
+      if (typeof window !== "undefined") {
+        window.open(BUY_ME_COFFEE_URL, "_blank", "noopener,noreferrer");
+      }
+      return;
+    }
+
+    setSpreadBlocked(false);
     const pool =
       secretSeed?.hit && secretSeed.id === "arcana-half"
         ? [...CARDS, ARCANA_HALF_CARD]
@@ -621,6 +666,7 @@ export default function App() {
     setSpreadLoading(true);
     setStage("three");
     loadSpreadReading(picks);
+    setSpreadCount((prev) => Math.min(prev + 1, SPREAD_FREE_LIMIT));
   }
 
   async function loadAffirmation(card) {
@@ -952,19 +998,19 @@ Keywords: ${top.keywords.join(", ")}
         .filter(Boolean)
     : [];
   const resonance = useMemo(
-    () => buildResonance(bgTheme, currentCard, t),
-    [bgTheme, currentCard, t]
+    () => buildResonance(weatherTheme, currentCard, t),
+    [weatherTheme, currentCard, t]
   );
   const currentCrystal = useMemo(() => suggestCrystal(currentCard), [currentCard]);
   const guardianCrystalDisplay = lastGuardianCrystal || currentCrystal;
   const dailyCrystal = useMemo(
     () =>
       recommendCrystal({
-        weatherKey: bgTheme,
+        weatherKey: weatherTheme,
         moonPhase: moon?.phaseKey,
         emotion: inferCardMood(currentCard),
       }),
-    [bgTheme, moon, currentCard]
+    [weatherTheme, moon, currentCard]
   );
   const currentTrack =
     AMBIENT_TRACKS.find((t) => t.id === trackId) || AMBIENT_TRACKS[0];
@@ -974,6 +1020,9 @@ Keywords: ${top.keywords.join(", ")}
     if (!meta) return null;
     return { ...meta, payload: secretSeed.payload };
   }, [secretSeed]);
+  const activeTheme =
+    BACKGROUND_THEMES.find((theme) => theme.id === backgroundThemeId) ||
+    BACKGROUND_THEMES[0];
   const starBoost = activeSecret?.id === "lost-star-stone";
   const moonFragmentOn = activeSecret?.id === "moon-fragment";
   const prophecyOn = activeSecret?.id === "prophecy-line";
@@ -991,13 +1040,11 @@ Keywords: ${top.keywords.join(", ")}
 
   const navFocus = useMemo(() => {
     if (stage === "home") return "home";
-    if (stage === "draw" || stage === "result") return "draw";
-    if (stage === "three") return lastSpreadFocus;
     if (stage === "moon") return "moon";
-    if (stage === "chat") return "chat";
-    if (stage === "encyclopedia") return "encyclopedia";
+    if (stage === "dream") return "dream";
+    if (TAROT_STAGES.has(stage)) return "tarot";
     return null;
-  }, [stage, lastSpreadFocus]);
+  }, [stage]);
 
   const nightNavItems = [
     {
@@ -1007,22 +1054,10 @@ Keywords: ${top.keywords.join(", ")}
       action: () => setStage("home"),
     },
     {
-      id: "draw",
+      id: "tarot",
       icon: "🔮",
-      label: "Draw",
-      action: startDraw,
-    },
-    {
-      id: "spread",
-      icon: "🌙",
-      label: "Spread",
-      action: () => startSpread({ focus: "spread" }),
-    },
-    {
-      id: "crystal",
-      icon: "💎",
-      label: t("home.collectCrystals"),
-      action: () => startSpread({ focus: "crystal" }),
+      label: "Tarot",
+      action: () => setStage("tarot"),
     },
     {
       id: "moon",
@@ -1031,16 +1066,10 @@ Keywords: ${top.keywords.join(", ")}
       action: openMoonCycle,
     },
     {
-      id: "chat",
-      icon: "💬",
-      label: t("home.chat"),
-      action: openMysticChat,
-    },
-    {
-      id: "encyclopedia",
-      icon: "📚",
-      label: t("home.encyclopedia"),
-      action: openEncyclopedia,
+      id: "dream",
+      icon: "🌌",
+      label: "Dream",
+      action: openDreamBottle,
     },
   ];
 
@@ -1049,7 +1078,42 @@ Keywords: ${top.keywords.join(", ")}
   const showStarStoneVisual = isHomeStage && starBoost;
   const showSecretChip = !isHomeStage && activeSecret;
   const pixelBoost = isHomeStage && starBoost;
-  const pixelAccent = showMoonFragmentVisual ? "#cfe4ff" : undefined;
+  const pixelAccent = showMoonFragmentVisual ? "#cfe4ff" : activeTheme.accent;
+
+  const homeHighlights = [
+    {
+      id: "draw",
+      icon: "🃏",
+      title: "Instant oracle",
+      detail: "Let a single card whisper tonight's focus.",
+      action: startDraw,
+      button: t("home.single"),
+    },
+    {
+      id: "spread",
+      icon: "🌌",
+      title: "Three-card spread",
+      detail: "Map past, present, and future with gentle reveals.",
+      action: startSpread,
+      button: t("home.spread"),
+    },
+    {
+      id: "chat",
+      icon: "💬",
+      title: "Mystic chat",
+      detail: "Ask the AI oracle for ritual notes or reflections.",
+      action: openMysticChat,
+      button: t("home.chat"),
+    },
+    {
+      id: "dream",
+      icon: "💧",
+      title: "Dream bottle",
+      detail: "Lock a wish or gratitude and let it glow all night.",
+      action: openDreamBottle,
+      button: t("home.dreamBottle"),
+    },
+  ];
 
   return (
     <div
@@ -1057,8 +1121,12 @@ Keywords: ${top.keywords.join(", ")}
         showStarStoneVisual ? "star-stone-on" : ""
       } ${activeSecret?.id === "easter-aurora" ? "aurora-on" : ""}`}
     >
-      <Background theme={bgTheme} />
-      <PixelStars theme={bgTheme} boost={pixelBoost} accent={pixelAccent} />
+      <Background weather={weatherTheme} themeId={activeTheme.id} />
+      <PixelStars
+        theme={activeTheme.id}
+        boost={pixelBoost}
+        accent={pixelAccent}
+      />
 
       <header className="nw-header">
         <div className="logo">🌙 NightWhisper Tarot</div>
@@ -1077,6 +1145,23 @@ Keywords: ${top.keywords.join(", ")}
                 >
                   <span className="sound-chip-name">{track.label}</span>
                   <span className="sound-chip-note">{track.note}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="theme-picker" aria-label="Background themes">
+            {BACKGROUND_THEMES.map((theme) => {
+              const active = theme.id === backgroundThemeId;
+              return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  className={`theme-chip ${active ? "active" : ""}`}
+                  onClick={() => setBackgroundThemeId(theme.id)}
+                  aria-pressed={active}
+                >
+                  <span className="theme-chip-emoji">{theme.emoji}</span>
+                  <span className="theme-chip-label">{theme.label}</span>
                 </button>
               );
             })}
@@ -1124,27 +1209,116 @@ Keywords: ${top.keywords.join(", ")}
       )}
 
       <main className="nw-main">
+        {spreadBlocked && (
+          <div className="bmc-box spread-limit">
+            <p className="bmc-text">
+              {t("spread.limitHint", { limit: SPREAD_FREE_LIMIT })}
+            </p>
+            <a
+              className="bmc-btn"
+              href={BUY_ME_COFFEE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("spread.limitButton")}
+            </a>
+          </div>
+        )}
         {stage === "home" && (
-          <div className="panel panel-static home-panel">
-            <h1>{t("home.title")}</h1>
-            <div className="home-cta">
+          <section className="panel panel-static home-stage">
+            <div className="home-hero">
+              <div className="home-hero-copy">
+                <p className="home-hero-chip">NightWhisper Portal</p>
+                <h1>{t("home.title")}</h1>
+                <p className="home-hero-lede">{t("home.tag")}</p>
+                <div className="home-hero-meta">
+                  {moon && (
+                    <span className="home-hero-pill">
+                      {moon.name} · {moon.mood}
+                    </span>
+                  )}
+                  {dailyCrystal && (
+                    <span className="home-hero-pill">
+                      {t("result.dailyCrystalTitle")} · {dailyCrystal.name}
+                    </span>
+                  )}
+                </div>
+                <div className="home-hero-actions">
+                  <button className="btn-main" onClick={startDraw}>
+                    {t("home.single")}
+                  </button>
+                  <button className="btn-main" onClick={startSpread}>
+                    {t("home.spread")}
+                  </button>
+                  <button className="btn-secondary" onClick={openDreamBottle}>
+                    {t("home.dreamBottle")}
+                  </button>
+                </div>
+              </div>
+              <div className="home-hero-visual">
+                <div className="home-hero-orb">
+                  <span className="home-hero-orb-emoji">{moon?.emoji || "🌙"}</span>
+                  <span className="home-hero-orb-text">
+                    {moonHint || t("home.title")}
+                  </span>
+                </div>
+                <p className="home-hero-tones">
+                  {moonTone || t("home.tag")}
+                </p>
+                {prophecyLine && (
+                  <p className="home-hero-prophecy">“{prophecyLine}”</p>
+                )}
+              </div>
+            </div>
+            <div className="home-highlight-grid">
+              {homeHighlights.map((block) => (
+                <article key={block.id} className="home-highlight-card">
+                  <div className="home-highlight-icon">{block.icon}</div>
+                  <div className="home-highlight-copy">
+                    <div className="home-highlight-title">{block.title}</div>
+                    <p className="home-highlight-desc">{block.detail}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="chip-btn home-highlight-btn"
+                    onClick={block.action}
+                  >
+                    {block.button}
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {stage === "tarot" && (
+          <div className="panel panel-static tarot-panel">
+            <div className="tarot-panel-header">
+              <h1>{t("home.title")}</h1>
+              <p className="tag">{t("home.tag")}</p>
+            </div>
+            <div className="tarot-cta">
               <button className="btn-main" onClick={startDraw}>
                 {t("home.single")}
               </button>
               <button className="btn-main" onClick={startSpread}>
                 {t("home.spread")}
               </button>
-              <button className="btn-main" onClick={openDreamBottle}>
-                {t("home.dreamBottle")}
+              <button className="btn-main" onClick={openEncyclopedia}>
+                {t("home.encyclopedia")}
+              </button>
+            </div>
+            <div className="tarot-chat-callout">
+              <p className="tag">{t("tarot.chatHint")}</p>
+              <button className="btn-secondary" onClick={openMysticChat}>
+                {t("home.chat")}
               </button>
             </div>
           </div>
         )}
 
         {stage === "moon" && (
-          <div className="panel panel-static moon-panel">
-            <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} t={t} />
-          </div>
+          <MoonCycleEngine moon={moon} onOpenDreamBottle={openDreamBottle} t={t} />
         )}
 
         {stage === "draw" && (

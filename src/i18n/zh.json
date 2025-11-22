@@ -62,7 +62,9 @@
     "empty": "一个温柔的提示升起。",
     "tap": "点击翻开",
     "new": "新的三张牌阵",
-    "collectTitle": "收集水晶"
+    "collectTitle": "收集水晶",
+    "limitHint": "已经使用了 {limit} 次免费三张牌阵，想继续探索请到 Buy Me a Coffee 支持。",
+    "limitButton": "请我喝杯咖啡"
   },
   "dream": {
     "title": "梦境瓶",

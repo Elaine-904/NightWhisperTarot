@@ -40,6 +40,7 @@ export default function CrystalGarden({
     [crystals, dailyCrystal]
   );
   const [activeId, setActiveId] = useState(defaultId);
+  const [strengthenedId, setStrengthenedId] = useState(null);
 
   useEffect(() => {
     if (!defaultId) return;
@@ -55,6 +56,22 @@ export default function CrystalGarden({
     if (dailyCrystal?.id === activeId) return dailyCrystal;
     return crystals[0] || dailyCrystal || null;
   }, [activeId, crystals, dailyCrystal]);
+
+  useEffect(() => {
+    if (!activeCrystal) {
+      setStrengthenedId(null);
+      return;
+    }
+    if (strengthenedId && activeCrystal.id !== strengthenedId) {
+      setStrengthenedId(null);
+    }
+  }, [activeCrystal, strengthenedId]);
+
+  const isStrengthened = Boolean(activeCrystal && strengthenedId === activeCrystal.id);
+
+  const handleStrengthen = (crystalId) => {
+    setStrengthenedId((prev) => (prev === crystalId ? null : crystalId));
+  };
 
   const handleTaskClaim = (crystalId) => {
     onGrantCrystal?.(crystalId, { source: "task" });
@@ -122,6 +139,22 @@ export default function CrystalGarden({
             <div className="detail-meta">
               {t("dream.crystalCollected")} {activeCrystal.date}
             </div>
+            <div
+              className={`detail-strengthen${isStrengthened ? " active" : ""}`}
+            >
+              <button
+                type="button"
+                className="chip-btn"
+                onClick={() => handleStrengthen(activeCrystal.id)}
+              >
+                {t("dream.crystalStrengthen")}
+              </button>
+              <span className="detail-strength-hint">
+                {isStrengthened
+                  ? t("dream.crystalStrengthened")
+                  : t("dream.crystalStrengthenHint")}
+              </span>
+            </div>
           </>
         ) : (
           <div className="detail-empty">{t("dream.crystalSelectHint")}</div>
@@ -130,6 +163,7 @@ export default function CrystalGarden({
 
       <div className="garden-tasks">
         <div className="garden-task-label">{t("dream.crystalTasks")}</div>
+        <div className="garden-task-hint">{t("dream.taskHint")}</div>
         <div className="garden-task-list">
           {BONUS_TASKS.map((task) => (
             <button

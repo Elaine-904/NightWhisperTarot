@@ -22,6 +22,9 @@
     "collectCrystals": "Collect crystals",
     "coffee": "Love the night draw? Buy me a coffee to keep creating ✨"
   },
+  "tarot": {
+    "chatHint": "Mystic Chat waits behind the Tarot deck; tap to whisper with the oracle."
+  },
   "draw": {
     "title": "Swipe up to draw",
     "subtitle": "Hold the card — slide upward gently."
@@ -62,7 +65,9 @@
     "empty": "A gentle hint arises.",
     "tap": "Tap to reveal",
     "new": "New three-card spread",
-    "collectTitle": "Collect crystals"
+    "collectTitle": "Collect crystals",
+    "limitHint": "You've used {limit} free three-card spreads. To draw more, please buy me a coffee.",
+    "limitButton": "Buy me a coffee"
   },
   "dream": {
     "title": "Dream Bottle",
@@ -94,15 +99,21 @@
         "note": "Aurora shimmer to guard endings and ready the next cycle."
       }
     },
-    "crystalGardenTitle": "Crystal Garden",
-    "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
-    "dailyCrystalLabel": "Tonight's crystal",
+  "crystalGardenTitle": "Crystal Garden",
+  "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
+  "collectibleIntro": "Your crystal collection is a Pokemon-style log; the {phase} moon unlocks another slot.",
+  "collectibleHint": "Mood, weather, and tiny rituals awaken different gems - each bond can be strengthened with a tap.",
+  "dailyCrystalLabel": "Tonight's crystal",
     "crystalEnergyLevel": "Energy",
-    "crystalEmpty": "No crystals yet — draw one to awaken the garden.",
-    "crystalCollected": "Collected on",
-    "crystalSelectHint": "Click a crystal to read its night energy + daily use.",
-    "crystalTasks": "Tasks",
-    "taskLoginLabel": "Daily login glow",
+  "crystalEmpty": "No crystals yet — draw one to awaken the garden.",
+  "crystalCollected": "Collected on",
+  "crystalSelectHint": "Click a crystal to read its night energy + daily use.",
+  "crystalStrengthen": "Strengthen",
+  "crystalStrengthenHint": "Give it a gentle shine to feel the bond.",
+  "crystalStrengthened": "The bond glows with a soft pulse.",
+  "crystalTasks": "Tasks",
+  "taskHint": "Complete these mini rituals to earn storybook crystals.",
+  "taskLoginLabel": "Daily login glow",
     "taskLoginDesc": "Sign in to receive Moonstone softness.",
     "taskWishLabel": "Wish note",
     "taskWishDesc": "Write a bottle wish to invite Rose Quartz warmth.",

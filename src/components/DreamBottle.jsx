@@ -117,18 +117,91 @@ export default function DreamBottle({
   }, [secretBottle, todayKey]);
 
   return (
-    <div className="panel dream-panel">
-      <h2 className="dream-title">
-        <span className="moon-icon" aria-hidden="true">
-          🌙
-        </span>
-        <span className="title-text">{t("dream.title")}</span>
-        <span className="title-glimmer" aria-hidden="true" />
-      </h2>
-      <p className="tag">{t("dream.tag")}</p>
-      {secretBottle && bottleLine && (
-        <div className="secret-bottle-line">{bottleLine}</div>
+    <section className="full-section dream-section">
+      <div className="dream-heading">
+        <h2 className="dream-title">
+          <span className="moon-icon" aria-hidden="true">
+            🌙
+          </span>
+          <span className="title-text">{t("dream.title")}</span>
+          <span className="title-glimmer" aria-hidden="true" />
+        </h2>
+        <p className="tag">{t("dream.tag")}</p>
+        {secretBottle && bottleLine && (
+          <div className="secret-bottle-line">{bottleLine}</div>
+        )}
+      </div>
+
+      <div className="dream-hero">
+        <div className="dream-bottle-focus">
+          <div className="dream-bottle-wrap">
+            <div className="aura-flow" aria-hidden="true">
+              <span className="aura-band aura-band-1" />
+              <span className="aura-band aura-band-2" />
+              <span className="aura-band aura-band-3" />
+            </div>
+            <div
+              className={`pixel-bottle ${showHistory ? "pixel-bottle-open" : ""}`}
+              onClick={() => setShowHistory((v) => !v)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setShowHistory((v) => !v);
+                }
+              }}
+            >
+              <div className="bottle-glow" />
+              <div className="bottle-liquid" />
+              <div className="bottle-sparkle sparkle-1" />
+              <div className="bottle-sparkle sparkle-2" />
+              <div className="bottle-sparkle sparkle-3" />
+            </div>
+          </div>
+          <div className="bottle-hint">{t("dream.hint")}</div>
+        </div>
+      </div>
+
+      <div className="dream-wish-block">
+        <label className="dream-label" htmlFor="wish-input">
+          {t("dream.label")}
+        </label>
+        <textarea
+          id="wish-input"
+          className="wish-input"
+          placeholder={t("dream.placeholder")}
+          value={wishText}
+          onChange={(e) => setWishText(e.target.value)}
+          rows={3}
+        />
+        <div className="save-status">
+          <span className={savedPing ? "pulse" : ""}>{t("dream.saved")}</span>
+        </div>
+      </div>
+
+      {showHistory && (
+        <div className="dream-history">
+          {wishes.length === 0 ? (
+            <div className="empty-history">{t("dream.empty")}</div>
+          ) : (
+            wishes.map((wish) => (
+              <div className="history-item" key={wish.date}>
+                <div className="history-meta">
+                  <span className="history-date">
+                    {formatDateLabel(wish.date, todayKey, dateLocale, t("dream.today"))}
+                  </span>
+                  {wish.date === todayKey && (
+                    <span className="history-tag">{t("dream.today")}</span>
+                  )}
+                </div>
+                <div className="history-text">{wish.text}</div>
+              </div>
+            ))
+          )}
+        </div>
       )}
+
       <div
         className="crystal-card"
         style={{
@@ -160,31 +233,11 @@ export default function DreamBottle({
         </div>
       </div>
 
-      <div className="dream-bottle-wrap">
-        <div className="aura-flow" aria-hidden="true">
-          <span className="aura-band aura-band-1" />
-          <span className="aura-band aura-band-2" />
-          <span className="aura-band aura-band-3" />
-        </div>
-        <div
-          className={`pixel-bottle ${showHistory ? "pixel-bottle-open" : ""}`}
-          onClick={() => setShowHistory((v) => !v)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setShowHistory((v) => !v);
-            }
-          }}
-        >
-          <div className="bottle-glow" />
-          <div className="bottle-liquid" />
-          <div className="bottle-sparkle sparkle-1" />
-          <div className="bottle-sparkle sparkle-2" />
-          <div className="bottle-sparkle sparkle-3" />
-        </div>
-        <div className="bottle-hint">{t("dream.hint")}</div>
+      <div className="collection-summary">
+        <p className="tag">
+          {t("dream.collectibleIntro", { phase: crystalPhaseLabel })}
+        </p>
+        <p className="tag">{t("dream.collectibleHint")}</p>
       </div>
 
       <div className="dream-garden-wrapper">
@@ -196,45 +249,11 @@ export default function DreamBottle({
         />
       </div>
 
-      <label className="dream-label" htmlFor="wish-input">
-        {t("dream.label")}
-      </label>
-      <textarea
-        id="wish-input"
-        className="wish-input"
-        placeholder={t("dream.placeholder")}
-        value={wishText}
-        onChange={(e) => setWishText(e.target.value)}
-        rows={3}
-      />
-      <div className="save-status">
-        <span className={savedPing ? "pulse" : ""}>{t("dream.saved")}</span>
-      </div>
-
-      {showHistory && (
-        <div className="dream-history">
-          {wishes.length === 0 ? (
-            <div className="empty-history">{t("dream.empty")}</div>
-          ) : (
-            wishes.map((wish) => (
-              <div className="history-item" key={wish.date}>
-                <div className="history-meta">
-                  <span className="history-date">
-                    {formatDateLabel(wish.date, todayKey, dateLocale, t("dream.today"))}
-                  </span>
-                  {wish.date === todayKey && <span className="history-tag">{t("dream.today")}</span>}
-                </div>
-                <div className="history-text">{wish.text}</div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
       <div className="action-row">
         <button className="btn-secondary" onClick={onBack}>
           {t("common.backHome")}
         </button>
       </div>
-    </div>
+    </section>
   );
 }
