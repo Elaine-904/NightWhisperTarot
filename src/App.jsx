@@ -48,7 +48,7 @@ const AMBIENT_TRACKS = [
     id: "cafe-hum",
     label: "Cafe",              // 原文: 咖啡厅
     note: "Soft Piano",         // 原文: 柔和钢琴
-    url: "https://cdn.pixabay.com/download/audio/2023/05/01/audio_2e501a2fbf.mp3?filename=lofi-study-112191.mp3",
+    url: "/cafe-chill.mp3",
     volume: 0.35,
     icon: "☕",
   },
@@ -56,7 +56,7 @@ const AMBIENT_TRACKS = [
     id: "forest-soft",
     label: "Forest",            // 原文: 森林
     note: "Stream & Insects",   // 原文: 溪水虫鸣
-    url: "https://cdn.pixabay.com/download/audio/2022/10/16/audio_9c8a9b9c96.mp3?filename=forest-lullaby-ambient-121089.mp3",
+    url: "/forest-nature.mp3",
     volume: 0.5,
     icon: "🌲",
   },
