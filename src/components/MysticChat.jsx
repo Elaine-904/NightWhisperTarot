@@ -181,7 +181,7 @@ function cleanLine(str) {
   return String(str).replace(/^[\-\d\.\•\s]+/, "").trim();
 }
 
-export default function MysticChat({ onBack, t }) {
+export default function MysticChat({ onBack, t, floating = false, showBackButton = true }) {
   const [messages, setMessages] = useState([
     {
       id: "hello",
@@ -329,16 +329,21 @@ export default function MysticChat({ onBack, t }) {
   }
 
   return (
-    <section className="full-section mystic-section" style={paletteStyle}>
+    <section
+      className={`full-section mystic-section${floating ? " mystic-cat-mode" : ""}`}
+      style={paletteStyle}
+    >
       <div className="mystic-halo" aria-hidden="true" />
       <header className="mystic-header">
         <div>
           <h2>{t("mystic.title")}</h2>
           <p className="tag">{t("mystic.tagline")}</p>
         </div>
-        <button className="btn-secondary slim" onClick={onBack}>
-          {t("mystic.back")}
-        </button>
+        {showBackButton && (
+          <button className="btn-secondary slim" onClick={onBack}>
+            {t("mystic.back")}
+          </button>
+        )}
       </header>
 
       <div className="mystic-shell">
@@ -375,7 +380,8 @@ export default function MysticChat({ onBack, t }) {
           </div>
         )}
         <div className="chat-window" ref={logRef}>
-        {messages.map((msg) => {
+          <div className="chat-window-glisten" aria-hidden="true" />
+          {messages.map((msg) => {
           if (msg.role === "user") {
             return (
               <div className="chat-row user" key={msg.id}>

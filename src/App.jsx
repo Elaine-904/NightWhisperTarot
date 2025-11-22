@@ -31,7 +31,6 @@ const TAROT_STAGES = new Set([
   "result",
   "three",
   "encyclopedia",
-  "chat",
 ]);
 
 const AMBIENT_TRACKS = [
@@ -418,6 +417,7 @@ export default function App() {
   const [trackId, setTrackId] = useState(AMBIENT_TRACKS[0].id);
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [themePanelOpen, setThemePanelOpen] = useState(false);
+  const [catChatVisible, setCatChatVisible] = useState(false);
   const [secretSeed, setSecretSeed] = useState(null);
   const [prophecyLine, setProphecyLine] = useState("");
 
@@ -642,7 +642,11 @@ export default function App() {
   }
 
   function openMysticChat() {
-    setStage("chat");
+    setCatChatVisible(true);
+  }
+
+  function closeMysticChat() {
+    setCatChatVisible(false);
   }
 
   function openEncyclopedia() {
@@ -1502,10 +1506,6 @@ Keywords: ${top.keywords.join(", ")}
           </div>
         )}
 
-        {stage === "chat" && (
-          <MysticChat onBack={() => setStage("home")} t={t} />
-        )}
-
         {stage === "dream" && (
           <DreamBottle
             onBack={() => setStage("home")}
@@ -1719,8 +1719,49 @@ Keywords: ${top.keywords.join(", ")}
           >
             ♫
           </button>
+          <button
+            className={`cat-chat-trigger ${catChatVisible ? "active" : ""}`}
+            type="button"
+            aria-label={t("mystic.title")}
+            onClick={() => setCatChatVisible(true)}
+          >
+            <span className="cat-chat-icon" aria-hidden="true">
+              😺
+            </span>
+          </button>
         </div>
       </div>
+
+      {catChatVisible && (
+        <div
+          className="cat-chat-overlay"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeMysticChat();
+          }}
+        >
+          <div
+            className="cat-chat-outlet"
+            role="dialog"
+            aria-label={t("mystic.title")}
+          >
+            <button
+              type="button"
+              className="cat-chat-close"
+              onClick={closeMysticChat}
+              aria-label={t("common.back")}
+            >
+              ✕
+            </button>
+            <MysticChat
+              onBack={closeMysticChat}
+              t={t}
+              floating
+              showBackButton={false}
+            />
+          </div>
+        </div>
+      )}
 
       <nav className="night-nav" aria-label="夜空导航">
         {nightNavItems.map((item) => (
