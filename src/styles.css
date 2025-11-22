@@ -3786,14 +3786,18 @@ h2 {
   transform: translateY(-1px);
 }
 .crystal-garden {
-  background: linear-gradient(160deg, #080812eb, #120a20d9);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 28px;
-  padding: min(28px, 6vw);
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.05), transparent 60%),
+    linear-gradient(160deg, #070814ee, #110a24dd);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 32px;
+  padding: clamp(28px, 5vw, 44px);
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.65);
+  gap: 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
 }
 .garden-header {
   display: flex;
@@ -3831,6 +3835,117 @@ h2 {
 .limit-note {
   font-size: 12px;
   color: #c9d2ff;
+}
+.garden-limit--simple {
+  max-width: 220px;
+  align-self: flex-end;
+  text-align: right;
+}
+.crystal-garden--simple {
+  position: relative;
+}
+.garden-hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 32px);
+  flex-wrap: wrap;
+}
+.floating-crystal {
+  width: clamp(120px, 24vw, 180px);
+  height: clamp(120px, 24vw, 180px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), #241140 65%);
+  position: relative;
+  display: grid;
+  place-items: center;
+  animation: gardenFloat 6s ease-in-out infinite;
+  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.1);
+}
+.floating-crystal::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 60%);
+  filter: blur(12px);
+  opacity: 0.6;
+}
+.floating-crystal-core {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(222, 161, 255, 0.85) 70%);
+  box-shadow: 0 0 28px rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #1b0c2d;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+.floating-crystal-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  animation: ringSpin 14s linear infinite;
+}
+.floating-crystal-ring--alt {
+  width: 128%;
+  height: 128%;
+  border-color: rgba(255, 255, 255, 0.1);
+  animation-duration: 10s;
+}
+.hero-copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hero-name {
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hero-note {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+}
+.garden-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.summary-card {
+  flex: 1 1 160px;
+  min-width: 160px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.summary-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #c4cffd;
+}
+.summary-value {
+  font-size: 24px;
+  font-weight: 600;
+}
+.garden-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
 }
 .garden-daily-card {
   display: flex;
@@ -4081,6 +4196,15 @@ h2 {
   .task-chip {
     flex: 1 1 100%;
   }
+  .garden-hero {
+    justify-content: center;
+  }
+  .floating-crystal {
+    margin: 0 auto;
+  }
+  .garden-summary {
+    flex-direction: column;
+  }
 }
 .limit-box {
   display: flex;
@@ -4170,6 +4294,23 @@ h2 {
   }
   50% {
     transform: translateY(-2px);
+  }
+}
+@keyframes gardenFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes ringSpin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 .pixel-card-wrap {

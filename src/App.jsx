@@ -120,20 +120,44 @@ function getGuardianCrystalId(card) {
 
 const SECRET_SEED_KEY = "nightwhisper.secretSeed";
 const PROPHECY_LINES = [
-  "月色把答案藏在拐角，留一盏灯给路过的自己。",
-  "今晚的风把旧梦翻面，夹带一颗微光的果核。",
-  "抬头看天花板的裂缝，可能正对着一片星海。",
-  "把未寄出的信折成船，放在水杯里等一阵月潮。",
-  "一粒灰尘也知道回家的路，只要灯还开着。",
+  "Moonlight tucks the answer around the corner, keeping a lamp on for the passing self.",
+  "The night wind flips an old dream over, carrying a seed of glimmering light.",
+  "Look up at the crack in the ceiling; it might open right into a sea of stars.",
+  "Fold the unsent letter into a boat, floating in a glass waiting for a moon tide.",
+  "Even a speck of dust knows the way home, as long as the light stays on.",
 ];
 
 const SECRET_POOL = [
-  { id: "moon-fragment", label: "月之碎片", desc: "卡牌泛着碎月描边，夜风里有轻微回响。" },
-  { id: "mystery-bottle", label: "神秘瓶子", desc: "Dream Bottle 里埋了一句隐藏星语。" },
-  { id: "lost-star-stone", label: "失落的星石", desc: "像素星群翻倍闪烁，遇星石会短暂发亮。" },
-  { id: "prophecy-line", label: "预言短句", desc: "主页出现一行只属于今晚的预言。" },
-  { id: "arcana-half", label: "隐藏卡 · 0.5", desc: "加入一张 Major Arcana 0.5：The Between。" },
-  { id: "easter-aurora", label: "彩蛋背景", desc: "背景切换极光晕彩，整晚发光。" },
+  { 
+    id: "moon-fragment", 
+    label: "Moon Fragment", 
+    desc: "Cards glow with shattered moonlight borders, echoing softly in the night wind." 
+  },
+  { 
+    id: "mystery-bottle", 
+    label: "Mystery Bottle", 
+    desc: "A hidden star-whisper is buried inside the Dream Bottle." 
+  },
+  { 
+    id: "lost-star-stone", 
+    label: "Lost Star Stone", 
+    desc: "Pixel constellations twinkle twice as fast, glowing briefly when near the Star Stone." 
+  },
+  { 
+    id: "prophecy-line", 
+    label: "Prophecy Line", 
+    desc: "A single line of prophecy appears on the homepage, meant only for tonight." 
+  },
+  { 
+    id: "arcana-half", 
+    label: "Hidden Card · 0.5", 
+    desc: "Adds a Major Arcana 0.5: 'The Between'." 
+  },
+  { 
+    id: "easter-aurora", 
+    label: "Secret Aurora", 
+    desc: "Background shifts to an aurora halo, glowing throughout the night." 
+  },
 ];
 
 const ARCANA_HALF_SVG = `
@@ -1141,12 +1165,6 @@ Keywords: ${top.keywords.join(", ")}
       label: "Moon",
       action: openMoonCycle,
     },
-    {
-      id: "dream",
-      icon: "🌌",
-      label: "Dream",
-      action: openDreamBottle,
-    },
   ];
 
   const isHomeStage = stage === "home";
@@ -1212,8 +1230,11 @@ Keywords: ${top.keywords.join(", ")}
           <section className="panel panel-static home-stage">
             <div className="home-hero">
               <div className="home-hero-copy">
-                <h1>{t("home.title")}</h1>
-                <p className="home-hero-lede focus-copy">{t("home.tag")}</p>
+                <TarotIntro
+                  title={t("home.title")}
+                  tag={t("home.tag")}
+                  tagClass="home-hero-lede focus-copy"
+                />
                 <div className="home-hero-meta">
                   {moon && (
                     <span className="home-hero-pill">
@@ -1226,14 +1247,23 @@ Keywords: ${top.keywords.join(", ")}
                     </span>
                   )}
                 </div>
-                <div className="home-hero-actions">
-                  <button className="btn-main" onClick={startDraw}>
-                    {t("home.single")}
-                  </button>
-                  <button className="btn-secondary" onClick={openDreamBottle}>
-                    {t("home.dreamBottle")}
-                  </button>
-                </div>
+                <TarotActions
+                  wrapperClassName="home-hero-actions"
+                  actions={[
+                    {
+                      key: "single",
+                      label: t("home.single"),
+                      onClick: startDraw,
+                      className: "btn-main",
+                    },
+                    {
+                      key: "dream",
+                      label: t("home.dreamBottle"),
+                      onClick: openDreamBottle,
+                      className: "btn-secondary",
+                    },
+                  ]}
+                />
               </div>
               <div className="home-hero-visual">
                 <div className="home-hero-orb">
@@ -1256,20 +1286,31 @@ Keywords: ${top.keywords.join(", ")}
         {stage === "tarot" && (
           <div className="panel panel-static tarot-panel">
             <div className="tarot-panel-header">
-              <h1>{t("home.title")}</h1>
-              <p className="tag">{t("home.tag")}</p>
+              <TarotIntro title={t("home.title")} tag={t("home.tag")} tagClass="tag" />
             </div>
-            <div className="tarot-cta">
-              <button className="btn-main" onClick={startDraw}>
-                {t("home.single")}
-              </button>
-              <button className="btn-main" onClick={startSpread}>
-                {t("home.spread")}
-              </button>
-              <button className="btn-main" onClick={openEncyclopedia}>
-                {t("home.encyclopedia")}
-              </button>
-            </div>
+            <TarotActions
+              wrapperClassName="tarot-cta"
+              actions={[
+                {
+                  key: "single",
+                  label: t("home.single"),
+                  onClick: startDraw,
+                  className: "btn-main",
+                },
+                {
+                  key: "spread",
+                  label: t("home.spread"),
+                  onClick: startSpread,
+                  className: "btn-main",
+                },
+                {
+                  key: "encyclopedia",
+                  label: t("home.encyclopedia"),
+                  onClick: openEncyclopedia,
+                  className: "btn-main",
+                },
+              ]}
+            />
           </div>
         )}
 
@@ -1775,6 +1816,34 @@ Keywords: ${top.keywords.join(", ")}
           </button>
         ))}
       </nav>
+    </div>
+  );
+}
+
+function TarotIntro({ title, tag, tagClass = "tag" }) {
+  return (
+    <>
+      <h1>{title}</h1>
+      <p className={tagClass}>{tag}</p>
+    </>
+  );
+}
+
+function TarotActions({ wrapperClassName, actions = [] }) {
+  if (!actions.length) return null;
+
+  return (
+    <div className={wrapperClassName}>
+      {actions.map(({ key, label, className = "btn-main", type = "button", ...rest }) => (
+        <button
+          key={key}
+          type={type}
+          className={className}
+          {...rest}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 }
