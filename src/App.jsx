@@ -1123,14 +1123,6 @@ Keywords: ${top.keywords.join(", ")}
       button: t("home.spread"),
     },
     {
-      id: "chat",
-      icon: "💬",
-      title: "Mystic chat",
-      detail: "Ask the AI oracle for ritual notes or reflections.",
-      action: openMysticChat,
-      button: t("home.chat"),
-    },
-    {
       id: "dream",
       icon: "💧",
       title: "Dream bottle",
