@@ -1149,135 +1149,26 @@ Keywords: ${top.keywords.join(", ")}
         accent={pixelAccent}
       />
 
-      <header className="nw-header">
+      <div className="nw-content">
+        <header className="nw-header">
         <div className="header-top">
           <div className="logo">🌙 NightWhisper Tarot</div>
-          <div className="header-controls">
-            <button
-              className={`panel-toggle ${themePanelOpen ? "active" : ""}`}
-              type="button"
-              aria-label={t("header.themeLabel")}
-              aria-expanded={themePanelOpen}
-              aria-controls="theme-panel"
-              onClick={toggleThemePanel}
-            >
-              🎨
-            </button>
-            <button
-              className={`panel-toggle ${musicPanelOpen ? "active" : ""}`}
-              type="button"
-              aria-label={t("header.ambientLabel")}
-              aria-expanded={musicPanelOpen}
-              aria-controls="music-panel"
-              onClick={toggleMusicPanel}
-            >
-              🎧
-            </button>
-            <button
-              className={`sound-btn ${audioOn ? "active" : ""}`}
-              onClick={() => setAudioOn((v) => !v)}
-              aria-pressed={audioOn}
-              title={
-                audioOn
-                  ? `${t("header.pauseTrack")} ${currentTrack.label}`
-                  : `${t("header.playTrack")} ${currentTrack.label}`
-              }
-            >
-              ♫
-            </button>
-          </div>
-        </div>
-        <div className="header-panels">
-          {musicPanelOpen && (
-            <div
-              className="header-panel header-panel--music"
-              id="music-panel"
-              aria-label={t("header.ambientLabel")}
-            >
-              <div className="panel-title">{t("header.ambientLabel")}</div>
-              <div className="sound-palette" aria-live="polite">
-                {AMBIENT_TRACKS.map((track) => {
-                  const active = track.id === trackId;
-                  return (
-                    <button
-                      key={track.id}
-                      className={`sound-chip ${active ? "active" : ""}`}
-                      onClick={() => setTrackId(track.id)}
-                      aria-pressed={active}
-                      title={`${t("header.switchTo")} ${track.label}`}
-                    >
-                      <span className="sound-chip-icon" aria-hidden="true">
-                        {track.icon}
-                      </span>
-                      <span className="sr-only">{track.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {themePanelOpen && (
-            <div
-              className="header-panel header-panel--theme"
-              id="theme-panel"
-              aria-label={t("header.themeLabel")}
-            >
-              <div className="panel-title">{t("header.themeLabel")}</div>
-              <div className="panel-lang">
-                <LangSwitcher lang={lang} setLang={setLang} />
-              </div>
-              <div className="theme-chip-grid">
-                {BACKGROUND_THEMES.map((theme) => {
-                  const active = theme.id === backgroundThemeId;
-                  return (
-                    <button
-                      key={theme.id}
-                      type="button"
-                      className={`theme-chip ${active ? "active" : ""}`}
-                      onClick={() => setBackgroundThemeId(theme.id)}
-                      aria-pressed={active}
-                      aria-label={theme.label}
-                      title={theme.label}
-                    >
-                      <span className="theme-chip-emoji">{theme.emoji}</span>
-                      <span className="sr-only">{theme.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
-      {showSecretChip && (
-        <div className="secret-chip">
-          <div className="secret-chip-title">
-            {t("secretChip.title")} · {activeSecret.label}
+        {showSecretChip && (
+          <div className="secret-chip">
+            <div className="secret-chip-title">
+              {t("secretChip.title")} · {activeSecret.label}
+            </div>
+            <div className="secret-chip-desc">{activeSecret.desc}</div>
+            {prophecyOn && prophecyLine && (
+              <div className="secret-prophecy">“{prophecyLine}”</div>
+            )}
           </div>
-          <div className="secret-chip-desc">{activeSecret.desc}</div>
-          {prophecyOn && prophecyLine && (
-            <div className="secret-prophecy">“{prophecyLine}”</div>
-          )}
-        </div>
-      )}
+        )}
 
-      {showMoonFragmentVisual && (
-        <div className="moon-fragments" aria-hidden="true">
-          {[...Array(6)].map((_, idx) => (
-            <span key={idx} className={`fragment piece-${idx}`} />
-          ))}
-        </div>
-      )}
-
-      {showStarStoneVisual && (
-        <div className="star-stone" aria-hidden="true">
-          <div className="stone-core" />
-          <div className="stone-ring" />
-        </div>
-      )}
-
-      <main className="nw-main">
+        <main className="nw-main">
         {spreadBlocked && (
           <div className="bmc-box spread-limit">
             <p className="bmc-text">
@@ -1631,7 +1522,23 @@ Keywords: ${top.keywords.join(", ")}
         {stage === "encyclopedia" && (
           <TarotEncyclopedia onBack={() => setStage("home")} t={t} />
         )}
-      </main>
+        </main>
+      </div>
+
+      {showMoonFragmentVisual && (
+        <div className="moon-fragments" aria-hidden="true">
+          {[...Array(6)].map((_, idx) => (
+            <span key={idx} className={`fragment piece-${idx}`} />
+          ))}
+        </div>
+      )}
+
+      {showStarStoneVisual && (
+        <div className="star-stone" aria-hidden="true">
+          <div className="stone-core" />
+          <div className="stone-ring" />
+        </div>
+      )}
 
       {currentCard && readingLines.length >= 1 && (
         <div className="share-stage" aria-hidden="true">
@@ -1716,6 +1623,104 @@ Keywords: ${top.keywords.join(", ")}
           </div>
         </div>
       )}
+
+      <div className="floating-controls">
+        <div className="floating-panels header-panels">
+          {musicPanelOpen && (
+            <div
+              className="header-panel header-panel--music"
+              id="music-panel"
+              aria-label={t("header.ambientLabel")}
+            >
+              <div className="panel-title">{t("header.ambientLabel")}</div>
+              <div className="sound-palette" aria-live="polite">
+                {AMBIENT_TRACKS.map((track) => {
+                  const active = track.id === trackId;
+                  return (
+                    <button
+                      key={track.id}
+                      className={`sound-chip ${active ? "active" : ""}`}
+                      onClick={() => setTrackId(track.id)}
+                      aria-pressed={active}
+                      title={`${t("header.switchTo")} ${track.label}`}
+                    >
+                      <span className="sound-chip-icon" aria-hidden="true">
+                        {track.icon}
+                      </span>
+                      <span className="sr-only">{track.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {themePanelOpen && (
+            <div
+              className="header-panel header-panel--theme"
+              id="theme-panel"
+              aria-label={t("header.themeLabel")}
+            >
+              <div className="panel-title">{t("header.themeLabel")}</div>
+              <div className="panel-lang">
+                <LangSwitcher lang={lang} setLang={setLang} />
+              </div>
+              <div className="theme-chip-grid">
+                {BACKGROUND_THEMES.map((theme) => {
+                  const active = theme.id === backgroundThemeId;
+                  return (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      className={`theme-chip ${active ? "active" : ""}`}
+                      onClick={() => setBackgroundThemeId(theme.id)}
+                      aria-pressed={active}
+                      aria-label={theme.label}
+                      title={theme.label}
+                    >
+                      <span className="theme-chip-emoji">{theme.emoji}</span>
+                      <span className="sr-only">{theme.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="floating-buttons">
+          <button
+            className={`panel-toggle ${themePanelOpen ? "active" : ""}`}
+            type="button"
+            aria-label={t("header.themeLabel")}
+            aria-expanded={themePanelOpen}
+            aria-controls="theme-panel"
+            onClick={toggleThemePanel}
+          >
+            🎨
+          </button>
+          <button
+            className={`panel-toggle ${musicPanelOpen ? "active" : ""}`}
+            type="button"
+            aria-label={t("header.ambientLabel")}
+            aria-expanded={musicPanelOpen}
+            aria-controls="music-panel"
+            onClick={toggleMusicPanel}
+          >
+            🎧
+          </button>
+          <button
+            className={`sound-btn ${audioOn ? "active" : ""}`}
+            onClick={() => setAudioOn((v) => !v)}
+            aria-pressed={audioOn}
+            title={
+              audioOn
+                ? `${t("header.pauseTrack")} ${currentTrack.label}`
+                : `${t("header.playTrack")} ${currentTrack.label}`
+            }
+          >
+            ♫
+          </button>
+        </div>
+      </div>
 
       <nav className="night-nav" aria-label="夜空导航">
         {nightNavItems.map((item) => (

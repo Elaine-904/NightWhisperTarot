@@ -100,9 +100,11 @@
         "note": "Aurora shimmer to guard endings and ready the next cycle."
       }
     },
-  "crystalGardenTitle": "Crystal Garden",
-  "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
-  "collectibleIntro": "Your crystal collection is a Pokemon-style log; the {phase} moon unlocks another slot.",
+    "crystalGardenTitle": "Crystal Garden",
+    "crystalGardenHint": "Collect crystals through draws, rituals, or logging in.",
+    "gardenMiniHint": "You've collected {count} crystals. Tap to open the garden.",
+    "gardenOverlayClose": "Close garden",
+    "collectibleIntro": "Your crystal collection is a Pokemon-style log; the {phase} moon unlocks another slot.",
   "collectibleHint": "Mood, weather, and tiny rituals awaken different gems - each bond can be strengthened with a tap.",
   "dailyCrystalLabel": "Tonight's crystal",
     "crystalEnergyLevel": "Energy",

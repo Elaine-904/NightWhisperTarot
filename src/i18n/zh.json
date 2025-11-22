@@ -99,6 +99,8 @@
     },
     "crystalGardenTitle": "水晶花园",
     "crystalGardenHint": "通过抽卡、任务或签到收集水晶。",
+    "gardenMiniHint": "你已收集 {count} 颗水晶，点击展开花园。",
+    "gardenOverlayClose": "关闭花园",
     "dailyCrystalLabel": "今夜之晶",
     "crystalEnergyLevel": "能量",
     "crystalEmpty": "还没有水晶，先抽一张唤醒花园吧。",

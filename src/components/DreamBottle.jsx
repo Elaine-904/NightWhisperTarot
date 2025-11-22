@@ -78,6 +78,7 @@ export default function DreamBottle({
   });
   const [showHistory, setShowHistory] = useState(false);
   const [savedPing, setSavedPing] = useState(false);
+  const [gardenOpen, setGardenOpen] = useState(false);
   const crystalPhaseKey = moon?.phaseKey || "new";
   const crystalMeta = resolveCrystalPhase(crystalPhaseKey);
   const crystalAccent = crystalMeta.accent;
@@ -102,6 +103,26 @@ export default function DreamBottle({
     const timer = setTimeout(() => setSavedPing(false), 1200);
     return () => clearTimeout(timer);
   }, [wishText, todayKey]);
+
+  useEffect(() => {
+    if (!gardenOpen || typeof window === "undefined") return undefined;
+    const handleKey = (event) => {
+      if (event.key === "Escape") {
+        setGardenOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [gardenOpen]);
+
+  useEffect(() => {
+    if (!gardenOpen || typeof document === "undefined") return undefined;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [gardenOpen]);
 
   const secretBottle = secretSeed?.id === "mystery-bottle";
   const bottleLine = useMemo(() => {
@@ -241,13 +262,55 @@ export default function DreamBottle({
       </div>
 
       <div className="dream-garden-wrapper">
-        <CrystalGarden
-          crystals={crystals}
-          dailyCrystal={dailyCrystal}
-          onGrantCrystal={onGrantCrystal}
-          t={t}
-        />
+        <button
+          type="button"
+          className="garden-mini-button"
+          onClick={() => setGardenOpen(true)}
+        >
+          <span className="garden-mini-icon" aria-hidden="true">
+            💠
+          </span>
+          <div className="garden-mini-text">
+            <span className="garden-mini-title">
+              {t("dream.crystalGardenTitle")}
+            </span>
+            <span className="garden-mini-hint">
+              {t("dream.gardenMiniHint", { count: crystals.length })}
+            </span>
+          </div>
+        </button>
       </div>
+
+      {gardenOpen && (
+        <div
+          className="garden-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("dream.crystalGardenTitle")}
+        >
+          <div
+            className="garden-overlay-backdrop"
+            onClick={() => setGardenOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="garden-overlay-panel">
+            <button
+              type="button"
+              className="garden-overlay-close"
+              aria-label={t("dream.gardenOverlayClose")}
+              onClick={() => setGardenOpen(false)}
+            >
+              ×
+            </button>
+            <CrystalGarden
+              crystals={crystals}
+              dailyCrystal={dailyCrystal}
+              onGrantCrystal={onGrantCrystal}
+              t={t}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="action-row">
         <button className="btn-secondary" onClick={onBack}>
